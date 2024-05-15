@@ -1,101 +1,96 @@
+import CreateModal from './CreateModal';
+import ListData from './ListData';
+import { HashLoader } from 'react-spinners';
 
-import CreateModal from "./CreateModal"
-import ListData from "./ListData"
-import { HashLoader } from "react-spinners";
-
-
-
-const List = ({rows,columns,QuickSearchToolbar, open,
-  setAlert,
+const List = ({
   loading,
   handleSubmit,
-  handleLeadStatus,
-  leadStatus,
-  setNoteEditorValue,
-  noteEditorValue,
-  handleLeadStatusSubmission,
-  setLeadStatus,
-  leadStatusData,
-  leadSources,
-  handleLeadStatusChange,
-  openLeadStatus,
+  handleChange,
+  handleAssignedLeads,
+  handleOpenLeadModal,
+  members,
+  count,
+  page,
+  handleDelete,
   newItem,
-  leadTypes,
-  leadStatusCounter,
-  leadCaptures,
+  leadAgents,
   setNewItem,
   loadScreen,
   openModal,
+  groupSelect,
+  setGroupSelect,
   setOpenModal,
   handleOpenModal,
-  anchor,
-  setAnchor,
-  openAnchor,
+  openAssignedLeadModal,
   handleCloseMenu,
-  handleDelete,
+  countriesList,
   handleSnackbarClose,
   showCreateForm,
+  handleLeadDistribution,
+  paginationHandler,
   handleCreateEdit,
+  groups,
+  status,
+  locations,
+  setPaginationModel,
   openSnackbar,
-  alert
+  alert,
 }) => {
-    return(
-      <div>
+  return (
+    <div>
       <CreateModal
-      rows={rows} columns={columns} open={open} 
-      setAlert = {setAlert} loading={loading} handleSubmit={handleSubmit} alert={alert}
-      QuickSearchToolbar={QuickSearchToolbar} openSnackbar = {openSnackbar}
-    leadSources = {leadSources}
-    setNewItem = {setNewItem}
-    newItem={newItem}
-    showCreateForm = { showCreateForm}
-      leadTypes={leadTypes}
-      handleCreateEdit={handleCreateEdit}
-      handleSnackbarClose={handleSnackbarClose}
-      
+        loading={loading}
+        handleSubmit={handleSubmit}
+        alert={alert}
+        openSnackbar={openSnackbar}
+        setNewItem={setNewItem}
+        newItem={newItem}
+        groupSelect={groupSelect}
+        setGroupSelect={setGroupSelect}
+        showCreateForm={showCreateForm}
+        groups={groups}
+        status={status}
+        locations={locations}
+        members={members}
+        countriesList={countriesList}
+        handleCreateEdit={handleCreateEdit}
+        handleSnackbarClose={handleSnackbarClose}
       />
 
       {!loadScreen ? (
-
-      <ListData rows={rows} columns={columns} open={open} 
-       anchor={anchor}
-       setAnchor={setAnchor}
-       openAnchor={openAnchor}
-       newItem = {newItem}
-       setNoteEditorValue = {setNoteEditorValue}
-       noteEditorValue = { noteEditorValue}
-       handleLeadStatus = {handleLeadStatus}
-      handleOpenModal = {handleOpenModal}
-      leadStatusCounter={leadStatusCounter}
-      setLeadStatus={setLeadStatus}
-      alert={alert}
-      handleLeadStatusSubmission={handleLeadStatusSubmission}
-openLeadStatus = {openLeadStatus}
-       showCreateForm = { showCreateForm}
-       
-       leadStatusData = {leadStatusData}
-       openSnackbar = {openSnackbar}
-       handleSnackbarClose={handleSnackbarClose}
-       handleCreateEdit={handleCreateEdit}
-       leadStatus={leadStatus}
-       leadCaptures = {leadCaptures}
-       handleLeadStatusChange = {handleLeadStatusChange}
-       openModal={openModal}
-       setOpenModal={setOpenModal}
-       setNewItem={setNewItem}
-       handleCloseMenu={handleCloseMenu}
-       handleDelete={handleDelete}
-      setAlert = {setAlert} loading={loading} handleSubmit={handleSubmit} 
-      QuickSearchToolbar={QuickSearchToolbar}/>
-      ):(
-        <div style={{ marginRight: "5px", textAlign: "center" }}>
-        <HashLoader size={20} color="#1b98e0" loading  className="mx-auto"/>
-        <p>Loading...</p>
-      </div>
+        <ListData
+          newItem={newItem}
+          handleAssignedLeads={handleAssignedLeads}
+          handleDelete={handleDelete}
+          handleChange={handleChange}
+          openAssignedLeadModal={openAssignedLeadModal}
+          handleLeadDistribution={handleLeadDistribution}
+          leadAgents={leadAgents}
+          paginationHandler={paginationHandler}
+          count={count}
+          handleOpenModal={handleOpenModal}
+          page={page}
+          setPaginationModel={setPaginationModel}
+          alert={alert}
+          members={members}
+          openSnackbar={openSnackbar}
+          handleSnackbarClose={handleSnackbarClose}
+          handleCreateEdit={handleCreateEdit}
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          setNewItem={setNewItem}
+          handleCloseMenu={handleCloseMenu}
+          loading={loading}
+          handleSubmit={handleSubmit}
+        />
+      ) : (
+        <div style={{ marginRight: '5px', textAlign: 'center' }}>
+          <HashLoader size={20} color="#1b98e0" loading className="mx-auto" />
+          <p>Loading...</p>
+        </div>
       )}
-          
     </div>
-    )
-}
+  );
+};
 
-export default List
+export default List;

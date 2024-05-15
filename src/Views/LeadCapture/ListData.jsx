@@ -1,228 +1,190 @@
-import { DataGrid } from "@mui/x-data-grid";
-import { Dialog, DialogContent, Menu, MenuItem } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { ClipLoader } from "react-spinners";
-import { Button } from "@mui/material";
-import DetailModal from "./DetailModal";
+import { Modal } from 'flowbite-react';
+import { FiEdit2 } from 'react-icons/fi';
+import { RiDeleteBin6Line } from 'react-icons/ri';
+import {Table } from 'flowbite-react';
 import { Player } from '@lottiefiles/react-lottie-player';
+import { Pagination } from '@mui/material';
 
 const ListData = ({
-  QuickSearchToolbar,
-  anchor,
-  setAnchor,
-  handleLeadStatus,
-  setLeadStatus,
-  setNoteEditorValue,
-  noteEditorValue,
-  handleLeadStatusSubmission,
-  handleLeadStatusChange,
-  openAnchor,
-  handleSnackbarClose,
-  setAlert,
-  alert,
-  openSnackbar,
-  openLeadStatus,
-  leadStatusCounter,
-  newItem,
+  handleSectors,
+  members,
+  handleCreateEdit,
+  count,
+  handleChange,
+  page,
   openModal,
-  leadStatusData,
   handleOpenModal,
   loading,
-  leadStatus,
-  leadCaptures,
-  setNewItem,
-  handleCreateEdit,
-  handleCloseMenu,
   handleDelete,
 }) => {
-  const handleClick = (event, params) => {
-    setNewItem(params.row);
-    setAnchor(event.currentTarget);
-  };
-
-console.log(leadCaptures);
-
-  const columns = [
-    { field: "firstName", headerName: "First name", width: 100,  renderCell: (params)=>{
-      return(
-          <p onClick={()=>handleLeadStatus(true,params.row)}>
-          
-          {params.row.firstName}
-          </p>
-      )
-    } },
-    { field: "lastName", headerName: "Last name", width: 130,  renderCell: (params)=>{
-      return(
-          <p onClick={()=>handleLeadStatus(true,params.row)}>
-          
-          {params.row.lastName}
-          </p>
-      )
-    } },
-    { field: "email", headerName: "E-mail", width: 130,  renderCell: (params)=>{
-      return(
-          <p onClick={()=>handleLeadStatus(true,params.row)}>
-          
-          {params.row.email}
-          </p>
-      )
-    } },
-    {
-      field: "phoneNumber",
-      headerName: "Phone Number",
-      width: 100,
-      renderCell: (params)=>{
-        return(
-            <p onClick={()=>handleLeadStatus(true,params.row)}>
-            
-            {params.row.phoneNumber}
-            </p>
-        )
-      }
-    },
-    {
-      field: "leadSourceName",
-      headerName: "Lead Source",
-      width: 130,
-      renderCell: (params)=>{
-        return(
-            <p onClick={()=>handleLeadStatus(true,params.row)}>
-            
-            {params.row.leadSourceName}
-            </p>
-        )
-      }
-    },
-    {
-      field: "leadTypeName",
-      headerName: "Lead Type",
-      width: 130,
-      renderCell: (params)=>{
-        return(
-            <p onClick={()=>handleLeadStatus(true,params.row)}>
-            
-            {params.row.leadTypeName}
-            </p>
-        )
-      }
-    },
-    {
-      field: "note",
-      headerName: "Notes",
-      width: 130,
-      renderCell: (params)=>{
-        return(
-            <p onClick={()=>handleLeadStatus(true,params.row)}>
-            
-            {params.row.note}
-            </p>
-        )
-      }
-     
-    },
-    
-    {
-      field: "action",
-      headerName: "Action",
-      renderCell: (params) => {
-        return <MoreVertIcon onClick={(e) => handleClick(e, params)} />;
-      },
-    },
-  ];
-
   return (
     <>
-      <Dialog
-        maxWidth="xs"
-        fullWidth
-        open={openModal}
+      <Modal
+        size={'lg'}
+        show={openModal}
         onClose={() => handleOpenModal(false)}
       >
-        <DialogContent>
-          <p className="mb-6">Are you sure you want to delete this record?</p>
+        <Modal.Body>
+          <div className="flex">
+            <img src="../images/deleteIcon.svg" alt="deleteIcon" />
+            <p className="font-semibold leading-7 mt-4 ml-4">Delete Member</p>
+          </div>
+
+          <p className="text-sm text-left leading-28 ml-16 mb-8">
+            Are you sure you want to delete this entry? This action cannot be
+            undone
+          </p>
           <div className="flex justify-between">
-            <div>
-              <Button
-                variant="contained"
-                className="cursor-pointer"
-                color="primary"
+            <div className="ml-16 mt-2">
+              {' '}
+            </div>
+            <div className="flex">
+              <button
+                type="button"
+                className="light-button"
                 onClick={() => handleOpenModal(false)}
               >
-                No
-              </Button>
-            </div>
-            <div>
-              <Button
-                variant="outlined"
-                className="cursor-pointer bg-red-500"
-                color="error"
+                Cancel
+              </button>
+
+              <button
                 type="submit"
-                onClick={handleDelete}
+                className="warning-button"
+                onClick={() => handleDelete()}
               >
-                {loading && (
-                  <div style={{ marginRight: "5px" }}>
-                    <ClipLoader size={20} color="#1b98e0" loading />
-                  </div>
-                )}
-                Yes
-              </Button>
+                Delete{' '}
+              </button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
-      <div>
-        <DetailModal openLeadStatus={openLeadStatus} 
-        setLeadStatus={setLeadStatus}
-        alert={alert}
-        setNoteEditorValue = {setNoteEditorValue}
-        handleSnackbarClose={handleSnackbarClose}
-        noteEditorValue = { noteEditorValue}
-        setAlert={setAlert}
-        openSnackbar={openSnackbar}
-        handleLeadStatusSubmission={handleLeadStatusSubmission}
-        handleLeadStatus={handleLeadStatus} leadStatusCounter={leadStatusCounter}
-        leadStatusData = {leadStatusData} handleLeadStatusChange = {handleLeadStatusChange} leadStatus = {leadStatus}
-        />
-      </div>
-      {leadCaptures.length > 0 ? (
-        <div style={{ height: 400, width: "100%" }}>
-          <DataGrid
-            rows={leadCaptures}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 5 },
-              },
-            }}
-            slots={{ toolbar: QuickSearchToolbar }}
-            
-            pageSizeOptions={[5, 10]}
-          />
+        </Modal.Body>
+      </Modal>
 
-          <Menu
-            id="basic-menu"
-            anchorEl={anchor}
-            open={openAnchor}
-            onClose={handleCloseMenu}
-            MenuListProps={{
-              "aria-labelledby": "basic-button",
-            }}
-          >
-            <MenuItem onClick={() => handleCreateEdit(true, newItem.id)}>
-              <EditIcon className="mr-2" color="primary" /> Edit
-            </MenuItem>
-            <MenuItem onClick={() => handleOpenModal(true, newItem)}>
-              <DeleteIcon className="mr-2" color="warning" /> Delete
-            </MenuItem>
-          </Menu>
+      <div className="">
+        {members.length > 0 ? (
+          <Table hoverable className="overflow-x-auto">
+            <Table.Head className="border bottom">
+              <Table.HeadCell className="capitalize text-sm bg-white text-left sticky top-0">
+                first name
+              </Table.HeadCell>
+              <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">
+                last name
+              </Table.HeadCell>
+              <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">
+                marital status
+              </Table.HeadCell>
+              <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">
+                phone number
+              </Table.HeadCell>
+              <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">
+                baptismal date
+              </Table.HeadCell>
+              <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">
+                group
+              </Table.HeadCell>
+              <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">
+                email
+              </Table.HeadCell>
+              <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">
+                digital address
+              </Table.HeadCell>
+              <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">
+                actions
+              </Table.HeadCell>
+            </Table.Head>
+            <Table.Body className="divide-y">
+              {members &&
+                members.map((item) => (
+                  <Table.Row
+                    className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                    key={item.id}
+                  >
+                    <Table.Cell
+                      className="whitespace-nowrap font-medium text-gray-900 text-sm cursor-pointer text-left"
+                      onClick={handleSectors}
+                    >
+                     {item.firstName}
+                    </Table.Cell>
+                    <Table.Cell
+                      onClick={handleSectors}
+                      className="text-sm cursor-pointer text-center"
+                    >
+                      {item.lastName}
+                    </Table.Cell>
+                    <Table.Cell
+                      onClick={handleSectors}
+                      className="text-sm cursor-pointer text-center"
+                    >
+                      {item.maritalStatus}
+                    </Table.Cell>
+                    <Table.Cell
+                      onClick={handleSectors}
+                      className="text-sm cursor-pointer text-center"
+                    >
+                      {item.phoneNumber}
+                    </Table.Cell>
+                    <Table.Cell
+                      onClick={handleSectors}
+                      className="text-sm cursor-pointer text-center"
+                    >
+                      {item.baptismalDate}
+                    </Table.Cell>
+                      <Table.Cell
+                      onClick={handleSectors}
+                      className="text-sm cursor-pointer text-center"
+                    >
+                      {item.group?.map((item)=>item)}
+                    </Table.Cell>
+                    <Table.Cell
+                      onClick={handleSectors}
+                      className="flex justify-center items-center text-sm"
+                    >
+                    </Table.Cell>
+                    <Table.Cell
+                      onClick={handleSectors}
+                      className=" text-sm cursor-pointer text-center "
+                    >
+                    </Table.Cell>
+                    <Table.Cell className="flex cursor-pointer">
+                      <RiDeleteBin6Line
+                        onClick={() => handleOpenModal(true, item.id)}
+                      />
+                      <FiEdit2
+                        className="ml-4"
+                        onClick={() => handleCreateEdit(true, item.id)}
+                      />
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+            </Table.Body>
+          </Table>
+        ) : (
+          <div>
+            <Player
+              src="https://lottie.host/5cf625e5-3dea-419f-8815-339aa533aa8d/yb6ZA0nz5Q.json"
+              loop
+              autoplay
+              className="w-64 h-48"
+            />
+            <p className="text-center">
+              You haven’t created any territories yet :(
+            </p>
+          </div>
+        )}
+      </div>
+
+      {members.length > 0 ? (
+        <div className="flex justify-center mt-4">
+          <Pagination
+            count={Math.floor(count / 10) + 1}
+            page={page}
+            shape="rounded"
+            color="primary"
+            size="small"
+            onChange={handleChange}
+          />
         </div>
       ) : (
-        <div>
-           <Player src='https://lottie.host/5cf625e5-3dea-419f-8815-339aa533aa8d/yb6ZA0nz5Q.json' loop autoplay className="w-64 h-64"/> 
-           <p>You haven’t created any leads yet :(</p>
-        </div>
+        ''
       )}
     </>
   );

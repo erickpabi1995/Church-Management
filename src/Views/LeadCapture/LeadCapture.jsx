@@ -1,353 +1,466 @@
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import { Alert } from "@mui/material";
-import { GridToolbarQuickFilter } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
+import { useCallback } from 'react';
+import { Button, Badge } from 'flowbite-react';
+import { useEffect, useState } from 'react';
+import Api from '../../components/Services/api';
+import List from './List';
+import { useNavigate } from 'react-router-dom';
+import { Alert, IconButton,Snackbar } from '@mui/material';
 
-import Api from "../../components/Services/api";
-import List from "./List";
-import { useNavigate } from "react-router-dom";
 
-function QuickSearchToolbar() {
-  return (
-    <Box
-      sx={{
-        p: 0.5,
-        pb: 0,
-      }}
-    >
-      <GridToolbarQuickFilter />
-    </Box>
-  );
-}
 const LeadCapture = () => {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [leadSources, setLeadSources] = useState([]);
-  const [leadTypes, setLeadTypes] = useState([]);
-  const [leadCaptures, setLeadCaptures] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const[count,setCount] = useState(0)
-  const [newItem, setNewItem] = useState({});
-  const [id, setId] = useState(0);
+  const [count, setCount] = useState(0);
+  const [newItem, setNewItem] = useState({
+    firstName: '',
+    location: '',
+    status: '',
+    group: '',
+        maritalStatus: '',
+    occupation: '',
+    placeOfWork: '',
+    digitalAddress: '',
+        phoneNumber: '',
+    secondaryPhoneNumber: '',
+    baptismalDate: '',
+    email: '',
+        otherName: '',
+    lastName: '',
+  });
   const [loadScreen, setLoadScreen] = useState(true);
   const [openModal, setOpenModal] = useState(false);
-  const [openLeadStatus, setOpenLeadStatus] = useState(false);
-  const [leadStatusData, setLeadStatusData] = useState();
-  const [leadStatus, setLeadStatus] = useState("cold");
-  const [noteEditorValue, setNoteEditorValue] = useState("");
-
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: 10,
+    page: 0,
+  });
+  const [members, setMembers] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [openDetailModal, setOpenDetailModal] = useState(false);
   const [alert, setAlert] = useState({
     open: false,
-    message: "",
-    severity: "success",
+    message: '',
+    severity: 'success',
   });
   const [openSnackbar, setOpenSnackbar] = useState(false);
-
   const [anchor, setAnchor] = useState(null);
+  const [id, setId] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [groupSelect, setGroupSelect] = useState([]);
 
-  const openAnchor = Boolean(anchor);
-
-  const handleCloseMenu = () => {
-    setAnchor(null);
-  };
-
-  const navigateImport = () => {
-navigate('/app/importLead')
-  }
-
-  const handleOpenModal = (value, item) => {
+  const handleOpenModal = (value, selected_id) => {
     setOpenModal(value);
+    setId(selected_id);
   };
 
-  const handleLeadStatus = (value, item) => {
-    setOpenLeadStatus(value);
-    setLeadStatusData(item);
-    setNoteEditorValue(item?.note);
+  const handleChange = (value) => {
+    setPage(value);
   };
 
-  const handleLeadStatusSubmission = async (value) => {
-    if (leadStatus === "cold") {
-      setOpenSnackbar(true);
-      setAlert({
-        open: true,
-        message: `Only hot and warm leads can be saved`,
-        severity: "error",
-      });
+  const handleDetail = (val, selected_id) => {
+    if (val && selected_id !== 0) {
+      getDetail(selected_id);
     }
-
-
-    await Api()
-      .patch(`/lead-captures/${value}/`, {
-        note: noteEditorValue,
-        leadStatus,
-      })
-      .then((res) => {
-        let result = res.data.data;
-        setLoading(false);
-        let filteredList = leadCaptures.filter((user) => user.id !== id);
-
-        const newItemList = [result, ...filteredList];
-        setLeadCaptures(newItemList);
-        setOpenSnackbar(true);
-        setAlert({
-          open: true,
-          message: `Lead edited successfully`,
-          severity: "success",
-        });
-        setOpenLeadStatus(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-        setOpenSnackbar(true);
-        setAlert({
-          open: true,
-          message: `${error?.response?.data?.error}`,
-          severity: "error",
-        });
-        setOpenLeadStatus(false);
-      });
+    setOpenDetailModal(val);
   };
+
+  function formatDate(date) {
+    let year = date.getFullYear();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+}
+
 
   const handleSubmit = async (e) => {
     const data = {
-      firstName: e.first_name,
-      lastName: e.last_name,
-      email: e.email,
-      phoneNumber: e.phone_number,
-      note: e.notes,
-      leadSource: e.lead_source,
-      leadType: e.lead_type,
+     ...e,
+     group: e.group.map(item => item.id),
+     baptismalDate:e.baptismalDate ? formatDate(e.baptismalDate) : formatDate(new Date())
     };
 
     if (id === 0) {
       setLoading(true);
       await Api()
-        .post("/lead-captures/", data)
+        .post('/members/', data)
         .then((res) => {
           let result = res.data.data;
           setLoading(false);
-          const newItemList = [result, ...leadCaptures];
-          setLeadCaptures(newItemList);
-          setCount(count + 1);
+          const newItemList = [result, ...members];
+          setMembers(newItemList);
           setOpenSnackbar(true);
           setAlert({
             open: true,
-            message: `Lead added successfully`,
-            severity: "success",
+            message: 'Member added successfully',
+            severity: 'success',
           });
           setShowCreateForm(false);
-          handleCloseMenu();
+          setGroupSelect([]);
         })
         .catch((error) => {
           setLoading(false);
           setOpenSnackbar(true);
           setAlert({
             open: true,
-            message: `${error?.response?.data?.error}`,
-            severity: "error",
+            message: `Error adding member`,
+            severity: 'error',
           });
           setShowCreateForm(false);
-          handleCloseMenu();
+          setGroupSelect([]);
         });
     } else {
       setLoading(true);
       await Api()
-        .patch(`/lead-captures/${id}/`, data)
+        .patch(`/members/${id}/`, data)
         .then((res) => {
           let result = res.data.data;
           setLoading(false);
-          let filteredList = leadCaptures.filter((item) => item.id !== id);
+
+          let filteredList = members.filter((item) => item.id !== id);
 
           const newItemList = [result, ...filteredList];
-          setLeadCaptures(newItemList);
+          setMembers(newItemList);
           setOpenSnackbar(true);
           setAlert({
             open: true,
-            message: `Lead edited successfully`,
-            severity: "success",
+            message: 'Member edited successfully',
+            severity: 'success',
           });
           setShowCreateForm(false);
-          handleCloseMenu();
         })
         .catch((error) => {
           setLoading(false);
+          setId(0);
           setOpenSnackbar(true);
           setAlert({
             open: true,
             message: `${error?.response?.data?.error}`,
-            severity: "error",
+            severity: 'error',
           });
           setShowCreateForm(false);
-          handleCloseMenu();
         });
     }
-  };
-
-  const handleSnackbarClose = (value) => {
-    setOpenSnackbar(false);
-  };
-
-  const LeadSourceData = async () => {
-    await Api()
-      .get("/partials/lead-sources")
-      .then((res) => {
-        setLeadSources(res.data.data.results);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
-
-  const LeadTypeData = async () => {
-    await Api()
-      .get("/partials/lead-types")
-      .then((res) => {
-        setLeadTypes(res.data.data.results);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
-
-  const LeadCaptures = async () => {
-    await Api()
-      .get(`/lead-captures?lead_status=${"Cold"}`)
-      .then((res) => {
-        setLoadScreen(false);
-        setLeadCaptures(res.data.data.results);
-        setCount(res.data.data.count)
-      })
-      .catch((err) => {
-        setLoadScreen(true);
-        console.log(err.message);
-      });
   };
 
   const handleDelete = () => {
     setLoading(true);
     Api()
-      .delete(`/lead-captures/${newItem.id}`)
-      .then((res) => {
+      .delete(`/members/${id}`)
+      .then(() => {
         setLoading(false);
-        let newItemList = leadCaptures.filter((user) => user.id !== newItem.id);
-        setLeadCaptures(newItemList);
+        let newItemList = members.filter((user) => user.id !== id);
+        setMembers(newItemList);
         setOpenSnackbar(true);
         setAlert({
           open: true,
-          message: `Lead deleted successfully`,
-          severity: "success",
+          message: 'Member deleted successfully',
+          severity: 'success',
         });
         handleOpenModal(false);
-        handleCloseMenu();
+        setId(0);
       })
-      .catch((err) => {
+      .catch(() => {
         setLoading(false);
         setOpenSnackbar(true);
         setAlert({
           open: true,
-          message: `${err.response.data.data}`,
-          severity: "success",
+          message: 'Error deleting member',
+          severity: 'success',
         });
         handleOpenModal(false);
-        handleCloseMenu();
+        setId(0);
       });
   };
-  const getDetail = (val) => {
-    let selectedItem = leadCaptures.results?.find((item) => item.id === val);
-    setNewItem(selectedItem);
-    setId(selectedItem.id);
+
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
   };
+
+  const FarmData = useCallback(async () => {
+    await Api()
+      .get(`/members?page=${paginationModel.page + 1}`)
+      .then((res) => {
+        setMembers(res.data.data.results);
+        setCount(res.data.data.count);
+        setLoadScreen(false);
+      })
+      .catch(() => {
+        setLoadScreen(false);
+        setOpenSnackbar(true);
+        setAlert({
+          open: true,
+          message: 'Error in fetching',
+          severity: 'error',
+        });
+      });
+  }, [paginationModel.page]);
+
+  const Literals = async () => {
+    await Api()
+      .get(`/literals/all`)
+      .then((res) => {
+        setGroups(res.data.data.groups);
+        setStatus(res.data.data.statuses)
+        setLocations(res.data.data.locations)
+      })
+      .catch(() => {
+        setOpenSnackbar(true);
+        setAlert({
+          open: true,
+          message: 'Error in fetching literaks',
+          severity: 'error',
+        });
+      });
+  };
+
+
+  const getDetail = (val) => {
+    let selectedItem = members.find((item) => item?.id === val);
+console.log(selectedItem);
+    setNewItem(selectedItem);
+  };
+
+  console.log(newItem);
+
   const handleCreateEdit = (val, selected_id) => {
     setShowCreateForm(val);
     setNewItem({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phoneNumber: "",
-      leadSource: "",
-      leadCapture: "",
-      note: "",
+      firstName: '',
+      location: '',
+      status: '',
+      group: '',
+          maritalStatus: '',
+      occupation: '',
+      placeOfWork: '',
+      digitalAddress: '',
+          phoneNumber: '',
+      secondaryPhoneNumber: '',
+      baptismalDate: '',
+      email: '',
+          otherName: '',
+      lastName: '',
     });
 
     if (val && selected_id) {
       getDetail(selected_id);
     }
   };
+
+  const handleSectors = () => {
+    navigate('/app/farming/sectors');
+  };
+
   useEffect(() => {
-    LeadSourceData();
-    LeadTypeData();
-    LeadCaptures();
-  }, []);
+    let active = true;
+
+    (async () => {
+      setLoadScreen(true);
+      FarmData();
+      Literals();
+      localStorage.removeItem('leadId');
+      localStorage.removeItem('leadIds');
+      if (!active) {
+        return;
+      }
+
+      setLoadScreen(false);
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [paginationModel.page, FarmData]);
 
   return (
+    <>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        open={openSnackbar}
+        autoHideDuration={4000}
+        onClose={() => handleSnackbarClose(false)}
+      >
+        <Alert
+          severity={`${alert.severity}`}
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setAlert({
+                  open: false,
+                  message: '',
+                  severity: '',
+                });
+              }}
+            ></IconButton>
+          }
+        >
+          {alert.message}
+        </Alert>
+      </Snackbar>
+
     <div>
-      <Alert severity="info" className="mt-2">
-        Add/Manage leads in your organization.{" "}
-        <span className="text-orange-400">
-          Learn more about setting up Leads.
-        </span>
-      </Alert>
-      <div className="flex justify-between mt-4">
-        <div>
-          <h3>Users({count})</h3>
-        </div>
-        <div className=" flex mr-4">
-          <div className="mr-4">
-            <Button variant="contained" onClick={navigateImport}>
-              Import Leads
-            </Button>
-          </div>
+     
 
-          <Button variant="contained" onClick={() => handleCreateEdit(true)}>
-            Add Leads
+       <div className="h-16 p-2 bg-[#FCFCFD] w-full mt-2 flex items-center">
+        <h3 className="text-left text-[#475467] font-bold m-auto ml-4 text-xl  leading-8 lato-bold">
+          {' '}
+          All Members
+        </h3>
+      </div>
+      <hr className="w-full h-px  bg-gray-200 border-0" />
+
+      <div className=" flex mt-4">
+        <Button.Group className="">
+          <Button size="xs" color="gray" className="capitalize font-bold">
+            Total Members
+            <Badge color="gray" className="ml-2">
+              1
+            </Badge>
           </Button>
-        </div>
-      </div>
+          <Button size="xs" color="gray" className="capitalize font-bold">
+            Status
+            <Badge color="gray" className="ml-2">
+              8
+            </Badge>
+          </Button>
+          <Button size="xs" color="gray" className="capitalize font-bold">
+            Location
+            <Badge color="gray" className="ml-2">
+              1
+            </Badge>
+          </Button>
+        </Button.Group>
 
-      <div className="flex mt-6">
-        <p className="text-[#8F95B2] text-sm">
-          This page shows a list of all leads
-        </p>
+        <Button.Group className="ml-5">
+          <Button size="xs" color="gray" className="capitalize font-bold">
+            total members
+            <Badge color="gray" className="ml-2">
+              173,097
+            </Badge>
+          </Button>
+          <Button size="xs" color="gray" className="capitalize font-bold">
+            baptized members
+            <Badge color="gray" className="ml-2">
+              1,097
+            </Badge>
+          </Button>
+          <Button size="xs" color="gray" className="capitalize font-bold">
+            occupation 
+            <Badge color="gray" className="ml-2">
+              172,000
+            </Badge>
+          </Button>
+        </Button.Group>
+
+        <Button.Group className="ml-6">
+          <Button size="xs" color="gray" className="capitalize font-bold">
+            active members
+            <Badge color="gray" className="ml-2">
+              1
+            </Badge>
+          </Button>
+        </Button.Group>
       </div>
-      <div className="">
+      <hr className=" h-[1.5px]  bg-gray-200 border-0  mt-4" />
+      <div className="h-[71px] p-2 bg-[#F9FAFB] mt-4 mb-4 flex items-center justify-between w-full">
+  <div className="flex items-center">
+    <p className="text-left text-[#1D2939] text-base font-medium mt-auto mb-auto ml-2 leading-8">
+      All Members
+    </p>
+  </div>
+  <div className="flex items-center">
+    <div className="relative mr-24">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg
+          fill="none"
+          stroke="#667085"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+          height="1em"
+          width="1em"
+        >
+          <path d="M19 11 A8 8 0 0 1 11 19 A8 8 0 0 1 3 11 A8 8 0 0 1 19 11 z" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+      </div>
+      <input
+        type="text"
+        id="email-address-icon"
+        className="listInput"
+        placeholder="Search by First Name / Last Name / Location"
+      />
+    </div>
+    <button
+      type="button"
+      className="create-button ml-2"
+      onClick={() => handleCreateEdit(true)}
+    >
+      <svg
+        viewBox="0 0 1024 1024"
+        fill="currentColor"
+        height="1.2em"
+        width="2em"
+      >
+        <defs>
+          <style />
+        </defs>
+        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" />
+        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" />
+      </svg>
+      Add New Member
+    </button>
+  </div>
+</div>
+
+      <div>
+
         <List
-          leadCaptures={leadCaptures}
           loadScreen={loadScreen}
           anchor={anchor}
           setAnchor={setAnchor}
-          openAnchor={openAnchor}
-          handleCloseMenu={handleCloseMenu}
           newItem={newItem}
-          handleDelete={handleDelete}
           showCreateForm={showCreateForm}
           handleSnackbarClose={handleSnackbarClose}
-          leadTypes={leadTypes}
-          leadSources={leadSources}
           setAlert={setAlert}
-          noteEditorValue={noteEditorValue}
-          setNoteEditorValue={setNoteEditorValue}
-          openLeadStatus={openLeadStatus}
-          setLeadStatus={setLeadStatus}
+          handleSectors={handleSectors}
           handleOpenModal={handleOpenModal}
-          loading={loading}
-          handleLeadStatus={handleLeadStatus}
+          handleChange={handleChange}
+          handleDetail={handleDetail}
           handleSubmit={handleSubmit}
           setNewItem={setNewItem}
           openModal={openModal}
           setOpenModal={setOpenModal}
-          handleLeadStatusSubmission={handleLeadStatusSubmission}
-          leadStatusData={leadStatusData}
+          paginationModel={paginationModel}
+          count={count}
+          setPaginationModel={setPaginationModel}
           handleCreateEdit={handleCreateEdit}
+          members={members}
+          groups={groups}
+          groupSelect={groupSelect}
+          setGroupSelect={setGroupSelect}
+          status={status}
+          locations={locations}
           openSnackbar={openSnackbar}
-          leadStatus={leadStatus}
+          loading={loading}
+          handleDelete={handleDelete}
+          openDetailModal={openDetailModal}
+          page={page}
           alert={alert}
-          QuickSearchToolbar={QuickSearchToolbar}
         />
       </div>
     </div>
+    </>
   );
 };
 

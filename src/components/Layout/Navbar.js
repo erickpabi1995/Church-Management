@@ -11,7 +11,7 @@ naviagate('/')
 
 <div className="navbar bg-base-100">
   <div className="flex-1">
-    <a href='/#' className="btn btn-ghost text-xl">BPOHOMES</a>
+    <a href='/#' className="btn btn-ghost text-xl">TDHC</a>
   </div>
   <div className="flex-none">
     <div className="dropdown dropdown-end">

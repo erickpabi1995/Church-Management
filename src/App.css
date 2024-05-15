@@ -37,21 +37,94 @@
   }
 }
 
+
 .w-100{
   width: 100%;
+  font-family: 'Work Sans', sans-serif ;
 }
 
+.tableCheckbox{
+  border-right: 1px solid #D0D5DD;
+}
 .grid-container{
   display: grid;
-  grid-template-columns: 10px auto 10px;
+  grid-template-columns:10px auto 10px;
   gap: 10px;
 }
+
+.notification-title {
+  font-family: 'Work Sans';
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  padding-left: 16px;
+}
+.notification-container{
+  width: 543px;
+}
+
+.table-animation {
+  opacity: 0;
+  transition: opacity 0.5s ease; /* Adjust the duration and easing as needed */
+}
+
+.table-animation.show {
+  opacity: 1;
+}
+
+
+
+
+.secondary-button{
+  @apply text-[#005EA9] hover:text-white border border-[#1378A5] hover:bg-[#1378A5] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800
+}
+
+
+
+.primary-button{
+  @apply text-white bg-[#005EA9] hover:bg-[#005EA9] focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800
+}
+
+.warning-button{
+  @apply text-white bg-[#D92D20] hover:bg-[#D92D20] focus:ring-4 focus:ring-[#D92D20] font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800
+}
+
+.light-button{
+  @apply text-[#344054] bg-[#FFFFFF] hover:bg-[#FFFFFF] focus:ring-4 focus:ring-[#FFFFFF] font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 border border-solid border-[#D0D5DD] shadow-sm
+}
+
+.create-button{
+  @apply px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-[#005EA9] rounded-lg hover:bg-[#005EA9] focus:ring-4 focus:outline-none focus:ring-blue-300;
+}
+
 
 .drawer{
   display: block;
 }
 .MuiDataGrid-cell{
 cursor: pointer;
+}
+
+.MuiPaginationItem-root.Mui-selected{
+  color:#0086C9 !important;
+  background-color: #F0F9FF !important;
+}
+.createInput{
+  @apply block w-80 p-2 mb-6 text-gray-900 border border-gray-300 rounded-lg bg-white text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder:italic placeholder:text-[#667085];
+}
+
+.createDropDown{
+  @apply block w-auto p-2 mb-6 text-xs text-[#667085]  border border-gray-300 rounded-lg bg-white focus:ring-gray-300 focus:border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+}
+
+.listInput{
+  @apply bg-white border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder:italic placeholder:text-[#667085];
+}
+
+::placeholder {
+  color: red;
+  opacity: 1; /* Firefox */
 }
 
 .active {
@@ -68,14 +141,47 @@ cursor: pointer;
   grid-template-columns: 400px 5px auto;
   gap: 10px;
 }
-
+.stsearch-box input{
+  padding: 2px !important;;
+  border:0px !important;
+}
 .header {
   @apply font-bold text-[1.728rem] sm:text-[2.074rem] mb-2 leading-10 text-[#101840];
 
 }
 
+.greenBadge{
+  @apply bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300
+}
+
+.redBadge{
+  @apply bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300
+}
+
+.active{
+  background-color: white;
+  color: #1378A5;
+  display: flex;
+  align-items: center; 
+  height: 40px;
+}
+
+.iconStyle{
+  font-size: 20px;
+  color:white
+}
+
+.active .iconStyle{
+  font-size: 20px;
+  color: #1378A5; 
+}
+
+*, *::before, *::after {
+  box-sizing: content-box;
+}
+
 .navLink{
-  @apply p-4
+  @apply bg-[#FFFFFF] text-black;
 }
 
 
@@ -90,7 +196,19 @@ cursor: pointer;
 
 }
 
-.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root{
-  font-family: 'Work Sans', sans-serif !important;
+.table-container {
+  overflow-x: auto;
 }
 
+.table {
+  width: 100%;
+  white-space: nowrap;
+}
+
+
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  display: none;
+}
