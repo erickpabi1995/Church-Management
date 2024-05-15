@@ -80,7 +80,7 @@ const LeadCapture = () => {
     const data = {
      ...e,
      group: e.group.map(item => item.id),
-     baptismalDate:e.baptismalDate ? formatDate(e.baptismalDate) : formatDate(new Date())
+     baptismalDate:e.baptismalDate ? formatDate(new Date(e.baptismalDate)) : formatDate(new Date())
     };
 
     if (id === 0) {
@@ -220,11 +220,14 @@ const LeadCapture = () => {
 
   const getDetail = (val) => {
     let selectedItem = members.find((item) => item?.id === val);
-console.log(selectedItem);
     setNewItem(selectedItem);
+    setId(selectedItem.id)
+    setGroupSelect( selectedItem?.groupsObj?.map((item) => ({
+      label: `${item.name}`,
+      id: item.id,
+    })),)
   };
 
-  console.log(newItem);
 
   const handleCreateEdit = (val, selected_id) => {
     setShowCreateForm(val);

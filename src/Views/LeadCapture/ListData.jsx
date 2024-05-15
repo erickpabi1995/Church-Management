@@ -82,7 +82,7 @@ const ListData = ({
                 group
               </Table.HeadCell>
               <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">
-                email
+                location
               </Table.HeadCell>
               <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">
                 digital address
@@ -132,12 +132,13 @@ const ListData = ({
                       onClick={handleSectors}
                       className="text-sm cursor-pointer text-center"
                     >
-                      {item.group?.map((item)=>item)}
+                   {item.groupsObj?.map(item => item.name).join(', ')}
                     </Table.Cell>
                     <Table.Cell
                       onClick={handleSectors}
                       className="flex justify-center items-center text-sm"
                     >
+                      {item.locationName}
                     </Table.Cell>
                     <Table.Cell
                       onClick={handleSectors}
@@ -166,7 +167,7 @@ const ListData = ({
               className="w-64 h-48"
             />
             <p className="text-center">
-              You haven’t created any territories yet :(
+              You haven’t created any member yet :(
             </p>
           </div>
         )}
