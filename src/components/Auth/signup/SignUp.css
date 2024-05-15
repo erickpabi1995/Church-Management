@@ -1,0 +1,7 @@
+.body {
+    display: grid;
+  @apply flex flex-row  h-screen md:grid w-full md:grid-cols-2;
+   
+  }
+  
+  
