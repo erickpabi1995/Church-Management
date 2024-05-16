@@ -6,6 +6,7 @@ import { ClipLoader } from "react-spinners";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import * as auth from "../../Services/auth";
+import { CiLocationOn } from "react-icons/ci";
 
 const Login = () => {
   const [passvalue, setPassvalue] = useState({
@@ -103,7 +104,7 @@ const Login = () => {
             message: "Login successful. Please wait...",
             severity: "success",
           });
-           window.location.assign('/app/leadCapture')
+           window.location.assign('/tdhc/leadCapture')
          
         })
         .catch((error) => {
@@ -124,9 +125,9 @@ const Login = () => {
   return (
     <div className="body flex h-screen">
     <div className="basis-3/6 my-auto card-padding">
-      <p className="header">Log In</p>
+      <p className="header">Welcome to the Divine Healer's Church</p>
       <p className="text-neutral-[#474D66] text-[0.833rem] leading-4 sm:text-base">
-        Enter your credentials to access your account
+        Log in
       </p>
       <Snackbar
         anchorOrigin={{
@@ -222,7 +223,26 @@ const Login = () => {
     </div>
 
     <div className="basis-3/6 bg-[#F4F6FA] p-5 justify-center">
-    <img src="./images/login.svg" alt="Signup Illustration" className="h-full w-auto" />
+      <div>
+      <img src="./images/login.svg" alt="Signup Illustration" className="h-full w-auto" />
+    <p className="text-center font-semibold mt-8">
+              The Divine Healer's Church shall be totally committed to seeking the kingdom of God
+              and made subject to the Lordship of Jesus Christ
+            </p>
+            <small className="text-center">
+             1 Corinthians 3:10
+            </small>
+            <div className="text-center">
+  <small className="inline-block align-middle">
+    <span className="inline-block align-middle">
+      <CiLocationOn className='text-lg' />
+    </span>
+    <span className="inline-block align-middle">: District E1 Prampram Mobole No.1 Assembly</span>
+  </small>
+</div>
+
+      </div>
+   
   </div>
   </div>
   );

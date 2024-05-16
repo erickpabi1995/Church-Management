@@ -11,7 +11,7 @@ const AppLayout = () => {
 <Route  path={"/"} element={<Login/>}>
                   
                   </Route>
-                <Route path={"/app/"} element={<Homepage/>}>
+                <Route path={"/tdhc/"} element={<Homepage/>}>
           <Route path="leadCapture" element={<LeadCapture/>} />
          </Route>
           
