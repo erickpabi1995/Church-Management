@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { Modal, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
 const style = {
@@ -22,23 +21,12 @@ const sectionHeaderStyle = {
   borderRadius: '4px',
 };
 
-const MembersReportModal = ({ open, handleClose, reportData }) => {
-  const [browserReady, setBrowserReady] = useState(false);
+const MembersReportModal = ({ open, handleClose, reportData,reportIsReady }) => {
+ 
 
-  useEffect(() => {
-    // Simulate browser readiness after a short delay
-    const timer = setTimeout(() => {
-      setBrowserReady(true);
-    }, 1000);
+  if (reportIsReady) {
 
-    // Clean up
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!browserReady) {
-    return null; // Render nothing if browser is not ready
-  }
-
+   
   return (
     <Modal
       open={open}
@@ -51,7 +39,7 @@ const MembersReportModal = ({ open, handleClose, reportData }) => {
           Members Report
         </Typography>
         <TableContainer component={Paper}>
-          <Table aria-label="leadCapture report table">
+          <Table aria-label="members report table">
             <TableHead>
               <TableRow>
                 <TableCell>Category</TableCell>
@@ -122,6 +110,8 @@ const MembersReportModal = ({ open, handleClose, reportData }) => {
     </Modal>
   );
 };
+
+  }
 
 export default MembersReportModal;
 

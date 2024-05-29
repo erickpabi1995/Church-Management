@@ -3,17 +3,18 @@ import { Button, Badge } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import Api from '../../components/Services/api';
 import List from './List';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { Alert, IconButton,Snackbar } from '@mui/material';
 import MembersReportModal from './MembersReportModal'; 
 
 
 const LeadCapture = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [maritalStatusOptions, setMaritalStatusOptions] = useState([]);
   const [MembersReport, setMembersReport] = useState([]);
   const [openReportModal, setOpenReportModal] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [reportIsReady, SetreportIsReady] = useState(false);
 
 
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -276,10 +277,12 @@ const handleCloseReportModal = () => setOpenReportModal(false);
     await Api()
       .get(`/members/reports/`)
       .then((res) => {
+        SetreportIsReady(true)
         setMembersReport(res.data.data); 
+       ;
       })
       .catch(() => {
-        setOpenSnackbar(true);
+        SetreportIsReady(true);
         setAlert({
           open: true,
           message: 'Error in fetching members reports',
@@ -292,11 +295,8 @@ const handleCloseReportModal = () => setOpenReportModal(false);
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      console.log('Enter key pressed')
-      // Find the button element by its ID or another identifier
       const button = document.getElementById('searchButton');
       if (button) {
-        // Simulate a click event on the button
         button.click();
       }
     }
@@ -341,9 +341,9 @@ const handleCloseReportModal = () => setOpenReportModal(false);
     }
   };
 
-  const handleSectors = () => {
-    navigate('/app/farming/sectors');
-  };
+  // const handleSectors = () => {
+    // navigate('/app/farming/sectors');
+  // };
 
 
   
@@ -456,12 +456,15 @@ const handleCloseReportModal = () => setOpenReportModal(false);
           View More
         </Button>
       </Button.Group>
+   
+   
+  <MembersReportModal
+    open={openReportModal}
+    handleClose={handleCloseReportModal}
+    reportData={MembersReport}
+    reportIsReady={reportIsReady}
+  />
 
-      <MembersReportModal
-        open={openReportModal}
-        handleClose={handleCloseReportModal}
-        reportData={MembersReport}
-      />
       </div>
       <hr className=" h-[1.5px]  bg-gray-200 border-0  mt-4" />
       <div className="h-[71px] p-2 bg-[#F9FAFB] mt-4 mb-4 flex items-center justify-between w-full">
@@ -699,7 +702,7 @@ const handleCloseReportModal = () => setOpenReportModal(false);
           showCreateForm={showCreateForm}
           handleSnackbarClose={handleSnackbarClose}
           setAlert={setAlert}
-          handleSectors={handleSectors}
+          // handleSectors={handleSectors}
           handleOpenModal={handleOpenModal}
           handleChange={handleChange}
           handleDetail={handleDetail}

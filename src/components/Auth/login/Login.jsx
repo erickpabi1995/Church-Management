@@ -84,6 +84,10 @@ const Login = () => {
       email: loginMail?.trim(),
       password: password?.trim(),
     };
+
+    localStorage.clear();
+
+    sessionStorage.clear()
     if (loginMail === "" || password === "") {
       setOpen(true);
       setAlert({
@@ -104,7 +108,7 @@ const Login = () => {
             message: "Login successful. Please wait...",
             severity: "success",
           });
-           window.location.assign('/tdhc/leadCapture')
+           window.location.assign('/tdhc/members')
          
         })
         .catch((error) => {

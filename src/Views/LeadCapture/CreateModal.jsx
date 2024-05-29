@@ -79,11 +79,11 @@ const CreateModal = ({
       >
         <div className="flex justify-between">
           <div className="bg-gradient-to-r from-[#1378A526] to-[#005EA900] border border-solid border-[#1378A54A] shadow-lg w-full">
-            <DialogTitle>Edit Lead</DialogTitle>
+            <DialogTitle>Edit Member</DialogTitle>
           </div>
         </div>
 
-        <form onSubmit={formik.handleSubmit}>
+        <form onSubmit={formik.handleSubmit} >
           <DialogContent style={{ paddingTop: '0.625rem' }}>
             <Create
               leadTypes={leadTypes}
