@@ -1,12 +1,10 @@
 import { MenuItem, TextField, Grid, Autocomplete } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-const Create = ({
-  formik,
-  locations,
-  groups,
-  status,
-}) => {
+
+const Create = ({ formik, locations, groups, status }) => {
+  const [imagePreview, setImagePreview] = useState(null);
+
   const groupAutoComplete = [
     ...groups.map((item) => ({
       label: `${item.name}`,
@@ -20,9 +18,21 @@ const Create = ({
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
     const day = today.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
-};
+  };
 
-console.log(formik.values.group);
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      formik.setFieldValue('profile', file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <>
       <Grid container spacing={4}>
@@ -38,15 +48,9 @@ console.log(formik.values.group);
               onBlur={formik.handleBlur}
               size="small"
               type="text"
-              error={Boolean(
-                formik.touched.firstName && formik.errors.firstName
-              )}
+              error={Boolean(formik.touched.firstName && formik.errors.firstName)}
               fullWidth
-              helperText={
-                formik.errors.firstName &&
-                formik.touched.firstName &&
-                String(formik.errors.firstName)
-              }
+              helperText={formik.errors.firstName && formik.touched.firstName && String(formik.errors.firstName)}
               variant="outlined"
             />
           </div>
@@ -60,14 +64,8 @@ console.log(formik.values.group);
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               size="small"
-              error={Boolean(
-                formik.touched.lastName && formik.errors.lastName
-              )}
-              helperText={
-                formik.errors.lastName &&
-                formik.touched.lastName &&
-                String(formik.errors.lastName)
-              }
+              error={Boolean(formik.touched.lastName && formik.errors.lastName)}
+              helperText={formik.errors.lastName && formik.touched.lastName && String(formik.errors.lastName)}
               fullWidth
               variant="outlined"
             />
@@ -98,7 +96,6 @@ console.log(formik.values.group);
               variant="outlined"
             />
           </div>
-
           <div className="dialoglabel">
             <p>Phone Number</p>
             <TextField
@@ -113,7 +110,6 @@ console.log(formik.values.group);
               variant="outlined"
             />
           </div>
-
           <div className="dialoglabel">
             <p>Marital Status </p>
             <TextField
@@ -126,60 +122,46 @@ console.log(formik.values.group);
               fullWidth
               invalid={!!formik.errors.maritalStatus}
               onBlur={formik.handleBlur}
-              error={Boolean(
-                formik.touched.maritalStatus && formik.errors.maritalStatus
-              )}
-              helperText={
-                formik.errors.maritalStatus &&
-                formik.touched.maritalStatus &&
-                String(formik.errors.maritalStatus)
-              }
+              error={Boolean(formik.touched.maritalStatus && formik.errors.maritalStatus)}
+              helperText={formik.errors.maritalStatus && formik.touched.maritalStatus && String(formik.errors.maritalStatus)}
               variant="outlined"
             >
-                <MenuItem value="">...Choose</MenuItem>
-                <MenuItem value="married">Married</MenuItem>
-                <MenuItem value="single">Single</MenuItem>
-                <MenuItem value="divorced">Divorced</MenuItem>
-                <MenuItem value="seperated">Seperated</MenuItem>
-           
-              </TextField>
+              <MenuItem value="">...Choose</MenuItem>
+              <MenuItem value="married">Married</MenuItem>
+              <MenuItem value="single">Single</MenuItem>
+              <MenuItem value="divorced">Divorced</MenuItem>
+              <MenuItem value="separated">Separated</MenuItem>
+            </TextField>
           </div>
           <div className="dialoglabel">
             <p>Group *</p>
             <Autocomplete
-                options={groupAutoComplete}
-                name="group"
-                multiple
-                onChange={(e, value) => {
-                    formik.setFieldValue('group', value);
-                }}
-                value={formik.values.group}
-                renderOption={(props, item) => (
-                    <li {...props} key={item.id}>
-                        <MenuItem>{item.label}</MenuItem>
-                    </li>
-                )}
-                size="small"
-                className="shadow-sm"
-                style={{ background: 'white' }}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        fullWidth
-                        helperText={
-                            formik.errors.group &&
-                            formik.touched.group &&
-                            String(formik.errors.group)
-                        }
-                        error={Boolean(
-                            formik.touched.group && formik.errors.group
-                        )}
-                        onBlur={formik.handleBlur}
-                        variant="outlined"
-                    />
-                )}
+              options={groupAutoComplete}
+              name="group"
+              multiple
+              onChange={(e, value) => {
+                formik.setFieldValue('group', value);
+              }}
+              value={formik.values.group}
+              renderOption={(props, item) => (
+                <li {...props} key={item.id}>
+                  <MenuItem>{item.label}</MenuItem>
+                </li>
+              )}
+              size="small"
+              className="shadow-sm"
+              style={{ background: 'white' }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  helperText={formik.errors.group && formik.touched.group && String(formik.errors.group)}
+                  error={Boolean(formik.touched.group && formik.errors.group)}
+                  onBlur={formik.handleBlur}
+                  variant="outlined"
+                />
+              )}
             />
-    
           </div>
         </Grid>
         <Grid item xs={6}>
@@ -196,7 +178,22 @@ console.log(formik.values.group);
               variant="outlined"
             />
           </div>
-
+          <div className="dialoglabel">
+            <p>Profile </p>
+            <input
+              type="file"
+              name="profile"
+              onChange={handleImageChange}
+              style={{ marginTop: '8px', marginBottom: '8px' }}
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Profile Preview"
+                style={{ marginTop: '8px', maxHeight: '200px' }}
+              />
+            )}
+          </div>
           <div className="dialoglabel">
             <p>Location *</p>
             <TextField
@@ -208,31 +205,25 @@ console.log(formik.values.group);
               onChange={formik.handleChange}
               invalid={!!formik.errors.location}
               onBlur={formik.handleBlur}
-              error={Boolean(
-                formik.touched.location && formik.errors.location
-              )}
+              error={Boolean(formik.touched.location && formik.errors.location)}
               fullWidth
               variant="outlined"
-              helperText={
-                formik.errors.location &&
-                formik.touched.location &&
-                String(formik.errors.location)
-              }
+              helperText={formik.errors.location && formik.touched.location && String(formik.errors.location)}
             >
-               <MenuItem value="">...Choose</MenuItem>
+              <MenuItem value="">...Choose</MenuItem>
               {locations?.map((item) => (
                 <MenuItem value={item.id} key={item.id}>
                   {item.name}
                 </MenuItem>
               ))}
-              </TextField>
+            </TextField>
           </div>
 
           <div className="dialoglabel">
             <p>Digital Address</p>
             <TextField
               fullWidth
-              size='small'
+              size="small"
               name="digitalAddress"
               value={formik.values.digitalAddress}
               onChange={formik.handleChange}
@@ -271,14 +262,12 @@ console.log(formik.values.group);
               autoFocus
               name="baptismalDate"
               size="small"
-              type='date'
+              type="date"
               value={formik.values.baptismalDate}
               onChange={formik.handleChange}
               fullWidth
               variant="outlined"
-              inputProps={{
-                max: getCurrentDate(),
-            }}
+              inputProps={{ max: getCurrentDate() }}
             />
           </div>
           <div className="dialoglabel">
@@ -292,24 +281,18 @@ console.log(formik.values.group);
               onChange={formik.handleChange}
               invalid={!!formik.errors.status}
               onBlur={formik.handleBlur}
-              error={Boolean(
-                formik.touched.status && formik.errors.status
-              )}
+              error={Boolean(formik.touched.status && formik.errors.status)}
               fullWidth
               variant="outlined"
-              helperText={
-                formik.errors.status &&
-                formik.touched.status &&
-                String(formik.errors.status)
-              }
+              helperText={formik.errors.status && formik.touched.status && String(formik.errors.status)}
             >
-               <MenuItem value="">...Choose</MenuItem>
+              <MenuItem value="">...Choose</MenuItem>
               {status?.map((item) => (
                 <MenuItem value={item.id} key={item.id}>
                   {item.name}
                 </MenuItem>
               ))}
-              </TextField>
+            </TextField>
           </div>
         </Grid>
       </Grid>
@@ -317,21 +300,11 @@ console.log(formik.values.group);
   );
 };
 
-export default Create;
-
 Create.propTypes = {
-  formik: PropTypes.func.isRequired,
-  leadSources: PropTypes.array.isRequired,
-  leadTypes: PropTypes.array.isRequired,
-  stateList: PropTypes.array.isRequired,
-  setCityList: PropTypes.func.isRequired,
-  setStateList: PropTypes.func.isRequired,
-  setStateId: PropTypes.func.isRequired,
-  stateId: PropTypes.string.isRequired,
-  cityId: PropTypes.string.isRequired,
-  setCityName: PropTypes.func.isRequired,
-  setStateName: PropTypes.func.isRequired,
-  GetCity: PropTypes.func.isRequired,
-  setCityId: PropTypes.func.isRequired,
-  cityList: PropTypes.array.isRequired,
+  formik: PropTypes.object.isRequired,
+  locations: PropTypes.array.isRequired,
+  groups: PropTypes.array.isRequired,
+  status: PropTypes.array.isRequired,
 };
+
+export default Create;

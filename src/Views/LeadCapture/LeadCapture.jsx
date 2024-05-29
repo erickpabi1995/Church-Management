@@ -21,6 +21,8 @@ const LeadCapture = () => {
     occupation: '',
     placeOfWork: '',
     digitalAddress: '',
+    profile: null, 
+
         phoneNumber: '',
     secondaryPhoneNumber: '',
     baptismalDate: '',
@@ -399,11 +401,126 @@ const LeadCapture = () => {
       </div>
       <input
         type="text"
-        id="email-address-icon"
+        id="occupation_search"
         className="listInput"
-        placeholder="Search by First Name / Last Name / Location"
+        placeholder="Search by Occupation"
       />
     </div>
+    <div className="relative mr-24">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg
+          fill="none"
+          stroke="#667085"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+          height="1em"
+          width="1em"
+        >
+          <path d="M19 11 A8 8 0 0 1 11 19 A8 8 0 0 1 3 11 A8 8 0 0 1 19 11 z" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+      </div>
+      <input
+        type="text"
+        id="location_search"
+        className="listInput"
+        placeholder="Search by location"
+      />
+    </div>
+    <div className="relative mr-24">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg
+          fill="none"
+          stroke="#667085"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+          height="1em"
+          width="1em"
+        >
+          <path d="M19 11 A8 8 0 0 1 11 19 A8 8 0 0 1 3 11 A8 8 0 0 1 19 11 z" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+      </div>
+      <input
+        type="text"
+        id="phone_number_search"
+        className="listInput"
+        placeholder="Search by phone_number"
+      />
+    </div>
+    <div className="relative mr-24">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg
+          fill="none"
+          stroke="#667085"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+          height="1em"
+          width="1em"
+        >
+          <path d="M19 11 A8 8 0 0 1 11 19 A8 8 0 0 1 3 11 A8 8 0 0 1 19 11 z" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+      </div>
+      <input
+        type="text"
+        id="marital_status_search"
+        className="listInput"
+        placeholder="Search by marital_status"
+      />
+    </div>
+
+    <div className="relative mr-24">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg
+          fill="none"
+          stroke="#667085"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+          height="1em"
+          width="1em"
+        >
+          <path d="M19 11 A8 8 0 0 1 11 19 A8 8 0 0 1 3 11 A8 8 0 0 1 19 11 z" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+      </div>
+      <input
+        type="text"
+        id="digital_address_search"
+        className="listInput"
+        placeholder="Search by First Name / Last Name / ID"
+      />
+    </div>
+
+    <button
+      type="button"
+      className="create-button ml-2"
+      onClick=""
+    >
+      <svg
+        viewBox="0 0 1024 1024"
+        fill="currentColor"
+        height="1.2em"
+        width="2em"
+      >
+        <defs>
+          <style />
+        </defs>
+        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" />
+        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" />
+      </svg>
+      Search
+    </button>
+
+
     <button
       type="button"
       className="create-button ml-2"

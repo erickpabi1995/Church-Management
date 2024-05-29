@@ -1,7 +1,7 @@
 import Api from "./api";
 import axios from "axios";
-import  Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode"
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const AUTH_TOKEN_KEY = "authToken";
 const CURRENT_USER = "currentUser";
@@ -13,7 +13,7 @@ export function loginUser(userData) {
       const res = await Api().post("/accounts/login/", userData);
       if (res.data) {
         const user = res.data.data.user;
-      
+
         setAuthToken(res.data.data.token.access);
         setCurrentUser(user);
         resolve(res);
@@ -32,16 +32,18 @@ export function logoutUser() {
 }
 
 export function setAuthToken(token) {
-  Cookies.set(AUTH_TOKEN_KEY, token, { domain: process.env.REACT_APP_DOMAIN});
+  Cookies.set(AUTH_TOKEN_KEY, token, { domain: process.env.REACT_APP_DOMAIN });
 }
 
 export function getAuthToken() {
-  return Cookies.get(AUTH_TOKEN_KEY, { domain: process.env.REACT_APP_DOMAIN});
+  return Cookies.get(AUTH_TOKEN_KEY, { domain: process.env.REACT_APP_DOMAIN });
 }
 
 export function clearAuthToken() {
   axios.defaults.headers.common.Authorization = "";
-  return Cookies.remove(AUTH_TOKEN_KEY,{ domain: process.env.REACT_APP_DOMAIN});
+  return Cookies.remove(AUTH_TOKEN_KEY, {
+    domain: process.env.REACT_APP_DOMAIN,
+  });
 }
 
 export function isLoggedIn() {
