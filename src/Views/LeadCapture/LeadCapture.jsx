@@ -5,12 +5,16 @@ import Api from '../../components/Services/api';
 import List from './List';
 import { useNavigate } from 'react-router-dom';
 import { Alert, IconButton,Snackbar } from '@mui/material';
+import MembersReportModal from './MembersReportModal'; 
 
 
 const LeadCapture = () => {
   const navigate = useNavigate();
   const [maritalStatusOptions, setMaritalStatusOptions] = useState([]);
   const [MembersReport, setMembersReport] = useState([]);
+  const [openReportModal, setOpenReportModal] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [count, setCount] = useState(0);
@@ -78,6 +82,11 @@ const LeadCapture = () => {
     
     return `${year}-${month}-${day}`;
 }
+
+
+const handleOpenReportModal = () => setOpenReportModal(true);
+const handleCloseReportModal = () => setOpenReportModal(false);
+
 
 
   const handleSubmit = async (e) => {
@@ -212,7 +221,7 @@ const LeadCapture = () => {
     const location = document.getElementById('location_search').value;
     const phone_number = document.getElementById('phone_number_search').value;
     const status = document.getElementById('church_status_search').value;
-    // const digital_address = document.getElementById('digital_address_search').value;
+    const gender = document.getElementById('gender_search').value;
     const search=document.getElementById('search').value;
 
     const queryParams = new URLSearchParams({
@@ -220,7 +229,7 @@ const LeadCapture = () => {
       location: location,
       phone_number: phone_number,
       status: status,
-      // digital_address: digital_address,
+      gender: gender,
       search:search
     }).toString();
 
@@ -279,6 +288,19 @@ const LeadCapture = () => {
       });
   };
 
+
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      console.log('Enter key pressed')
+      // Find the button element by its ID or another identifier
+      const button = document.getElementById('searchButton');
+      if (button) {
+        // Simulate a click event on the button
+        button.click();
+      }
+    }
+  };
   
   
 
@@ -383,12 +405,7 @@ const LeadCapture = () => {
     <div>
      
 
-       <div className="h-16 p-2 bg-[#FCFCFD] w-full mt-2 flex items-center">
-        <h3 className="text-left text-[#475467] font-bold m-auto ml-4 text-xl  leading-8 lato-bold">
-          {' '}
-          All Members
-        </h3>
-      </div>
+      
       <hr className="w-full h-px  bg-gray-200 border-0" />
 
       <div className=" flex mt-4">
@@ -430,19 +447,26 @@ const LeadCapture = () => {
         </Button.Group>
 
         <Button.Group className="ml-6">
-          <Button size="xs" color="gray" className="capitalize font-bold">
-            View More
-            
-          </Button>
-          
-        </Button.Group>
+        <Button
+          size="xs"
+          color="gray"
+          className="capitalize font-bold"
+          onClick={handleOpenReportModal}
+        >
+          View More
+        </Button>
+      </Button.Group>
+
+      <MembersReportModal
+        open={openReportModal}
+        handleClose={handleCloseReportModal}
+        reportData={MembersReport}
+      />
       </div>
       <hr className=" h-[1.5px]  bg-gray-200 border-0  mt-4" />
       <div className="h-[71px] p-2 bg-[#F9FAFB] mt-4 mb-4 flex items-center justify-between w-full">
   <div className="flex items-center">
-    <p className="text-left text-[#1D2939] text-base font-medium mt-auto mb-auto ml-2 leading-8">
-      All Members
-    </p>
+   
   </div>
   <div className="flex items-center">
     <div className="relative mr-24">
@@ -467,6 +491,9 @@ const LeadCapture = () => {
         id="occupation_search"
         className="listInput"
         placeholder="Search by Occupation"
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+        onKeyPress={handleKeyPress}
       />
     </div>
     <div className="relative mr-24">
@@ -490,6 +517,8 @@ const LeadCapture = () => {
         id="location_search"
         className="listInput"
         placeholder="Search by location"
+        onChange={(e) => setSearchValue(e.target.value)}
+        onKeyPress={handleKeyPress}
       />
     </div>
     <div className="relative mr-24">
@@ -513,8 +542,41 @@ const LeadCapture = () => {
         id="phone_number_search"
         className="listInput"
         placeholder="Search by phone_number"
+        onChange={(e) => setSearchValue(e.target.value)}
+        onKeyPress={handleKeyPress}
       />
     </div>
+
+    <div className="relative mr-24">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg
+          fill="none"
+          stroke="#667085"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+          height="1em"
+          width="1em"
+        >
+          <path d="M19 11 A8 8 0 0 1 11 19 A8 8 0 0 1 3 11 A8 8 0 0 1 19 11 z" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+      </div>
+      <select
+          id="gender_search"
+          className="listInput"
+          defaultValue="" 
+          onChange={(e) => {
+          }}
+          onKeyPress={handleKeyPress}
+        >
+          <option value="">Search by  Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+    </div>
+
     <div className="relative mr-24">
       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
         <svg
@@ -537,6 +599,7 @@ const LeadCapture = () => {
           defaultValue="" 
           onChange={(e) => {
           }}
+          onKeyPress={handleKeyPress}
         >
           <option value="">Search by  status</option>
           {maritalStatusOptions.map((status) => (
@@ -566,6 +629,8 @@ const LeadCapture = () => {
       <input
         type="text"
         id="search"
+        onChange={(e) => setSearchValue(e.target.value)}
+        onKeyPress={handleKeyPress}
         className="listInput"
         placeholder="First Name / Last Name / ID"
       />
@@ -574,22 +639,29 @@ const LeadCapture = () => {
     <button
       type="button"
       className="create-button ml-2"
+      id='searchButton'
       onClick={fetchDataWithSearchParams}
+
+      
+     
+
       
      
     >
       <svg
-        viewBox="0 0 1024 1024"
-        fill="currentColor"
-        height="1.2em"
-        width="2em"
-      >
-        <defs>
-          <style />
-        </defs>
-        <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" />
-        <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" />
-      </svg>
+  viewBox="0 0 24 24"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  height="1.2em"
+  width="2em"
+>
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M9 3a6 6 0 114.243 10.243l5.657 5.657-1.414 1.414-5.657-5.657A6 6 0 019 3zm0 2a4 4 0 100 8 4 4 0 000-8z"
+    fill="currentColor"
+  />
+</svg>
       Search
     </button>
 
@@ -611,7 +683,8 @@ const LeadCapture = () => {
         <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" />
         <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" />
       </svg>
-      Add New Member
+      Add<span style={{ marginLeft: '0.5rem' }}>Member</span>
+
     </button>
   </div>
 </div>
