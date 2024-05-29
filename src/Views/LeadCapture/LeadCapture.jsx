@@ -3,13 +3,11 @@ import { Button, Badge } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import Api from '../../components/Services/api';
 import List from './List';
-// import { useNavigate } from 'react-router-dom';
 import { Alert, IconButton,Snackbar } from '@mui/material';
 import MembersReportModal from './MembersReportModal'; 
 
 
 const LeadCapture = () => {
-  // const navigate = useNavigate();
   const [maritalStatusOptions, setMaritalStatusOptions] = useState([]);
   const [MembersReport, setMembersReport] = useState([]);
   const [openReportModal, setOpenReportModal] = useState(false);
@@ -24,17 +22,16 @@ const LeadCapture = () => {
     location: '',
     status: '',
     group: '',
-        maritalStatus: '',
+    maritalStatus: '',
     occupation: '',
     placeOfWork: '',
     digitalAddress: '',
     profile: null, 
-
-        phoneNumber: '',
+    phoneNumber: '',
     secondaryPhoneNumber: '',
     baptismalDate: '',
     email: '',
-        otherName: '',
+    otherName: '',
     lastName: '',
   });
   const [loadScreen, setLoadScreen] = useState(true);
@@ -61,6 +58,8 @@ const LeadCapture = () => {
   const [groupSelect, setGroupSelect] = useState([]);
 
   const handleOpenModal = (value, selected_id) => {
+
+    console.log('value',value)
     setOpenModal(value);
     setId(selected_id);
   };
@@ -88,77 +87,69 @@ const LeadCapture = () => {
 const handleOpenReportModal = () => setOpenReportModal(true);
 const handleCloseReportModal = () => setOpenReportModal(false);
 
+const handleSubmit = async (e) => {
+  const formData = new FormData();
 
-
-  const handleSubmit = async (e) => {
-    const data = {
-     ...e,
-     group: e.group.map(item => item.id),
-     baptismalDate:e.baptismalDate ? formatDate(new Date(e.baptismalDate)) : formatDate(new Date())
-    };
-
-    if (id === 0) {
-      setLoading(true);
-      await Api()
-        .post('/members/', data)
-        .then((res) => {
-          let result = res.data.data;
-          setLoading(false);
-          const newItemList = [result, ...members];
-          setMembers(newItemList);
-          setOpenSnackbar(true);
-          setAlert({
-            open: true,
-            message: 'Member added successfully',
-            severity: 'success',
-          });
-          setShowCreateForm(false);
-          setGroupSelect([]);
-        })
-        .catch((error) => {
-          setLoading(false);
-          setOpenSnackbar(true);
-          setAlert({
-            open: true,
-            message: `Error adding member`,
-            severity: 'error',
-          });
-          setShowCreateForm(false);
-          setGroupSelect([]);
-        });
+  // Convert form values to FormData
+  Object.keys(e).forEach((key) => {
+    if (key === 'group') {
+      e[key].forEach((item) => {
+        formData.append('group', item.id);
+      });
+    } else if (key === 'profile') {
+      if (e[key] instanceof File) {
+        formData.append('profile', e[key]);
+      }
     } else {
-      setLoading(true);
-      await Api()
-        .patch(`/members/${id}/`, data)
-        .then((res) => {
-          let result = res.data.data;
-          setLoading(false);
-
-          let filteredList = members.filter((item) => item.id !== id);
-
-          const newItemList = [result, ...filteredList];
-          setMembers(newItemList);
-          setOpenSnackbar(true);
-          setAlert({
-            open: true,
-            message: 'Member edited successfully',
-            severity: 'success',
-          });
-          setShowCreateForm(false);
-        })
-        .catch((error) => {
-          setLoading(false);
-          setId(0);
-          setOpenSnackbar(true);
-          setAlert({
-            open: true,
-            message: `${error?.response?.data?.error}`,
-            severity: 'error',
-          });
-          setShowCreateForm(false);
-        });
+      formData.append(key, e[key]);
     }
-  };
+  });
+
+  const formattedBaptismalDate = e.baptismalDate ? formatDate(new Date(e.baptismalDate)) : formatDate(new Date());
+  formData.set('baptismalDate', formattedBaptismalDate);
+
+  try {
+    setLoading(true);
+
+    let response;
+    if (id === 0) {
+      // Create new member
+      response = await Api().post('/members/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    } else {
+      // Edit existing member
+      response = await Api().patch(`/members/${id}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
+
+    const result = response.data.data;
+    setLoading(false);
+    const newItemList = id === 0 ? [result, ...members] : [result, ...members.filter((item) => item.id !== id)];
+
+   
+    setMembers(newItemList);
+    setOpenSnackbar(true);
+    setAlert({
+      open: true,
+      message: `Member ${id === 0 ? 'added' : 'edited'} successfully`,
+      severity: 'success',
+    });
+    setShowCreateForm(false);
+    setGroupSelect([]);
+  } catch (error) {
+    setLoading(false);
+    setId(0);
+    setOpenSnackbar(true);
+    setAlert({
+      open: true,
+      message: `Error: ${error?.response?.data?.error || 'An error occurred'}`,
+      severity: 'error',
+    });
+    // setShowCreateForm(false);
+  }
+};
 
   const handleDelete = () => {
     setLoading(true);
@@ -307,6 +298,7 @@ const handleCloseReportModal = () => setOpenReportModal(false);
 
   const getDetail = (val) => {
     let selectedItem = members.find((item) => item?.id === val);
+
     setNewItem(selectedItem);
     setId(selectedItem.id)
     setGroupSelect( selectedItem?.groupObj?.map((item) => ({
@@ -319,31 +311,32 @@ const handleCloseReportModal = () => setOpenReportModal(false);
 
   const handleCreateEdit = (val, selected_id) => {
     setShowCreateForm(val);
+    setId(0)
     setNewItem({
+      
       firstName: '',
       location: '',
       status: '',
       group: '',
-          maritalStatus: '',
+      maritalStatus: '',
       occupation: '',
       placeOfWork: '',
       digitalAddress: '',
-          phoneNumber: '',
+      phoneNumber: '',
       secondaryPhoneNumber: '',
       baptismalDate: '',
       email: '',
-          otherName: '',
+      otherName: '',
       lastName: '',
     });
+
+  
 
     if (val && selected_id) {
       getDetail(selected_id);
     }
   };
 
-  // const handleSectors = () => {
-    // navigate('/app/farming/sectors');
-  // };
 
 
   
@@ -695,6 +688,7 @@ const handleCloseReportModal = () => setOpenReportModal(false);
       <div>
 
         <List
+          id={id}
           loadScreen={loadScreen}
           anchor={anchor}
           setAnchor={setAnchor}

@@ -3,6 +3,7 @@ import ListData from './ListData';
 import { HashLoader } from 'react-spinners';
 
 const List = ({
+  id,
   loading,
   handleSubmit,
   handleChange,
@@ -39,6 +40,7 @@ const List = ({
   return (
     <div>
       <CreateModal
+        id={id}
         loading={loading}
         handleSubmit={handleSubmit}
         alert={alert}

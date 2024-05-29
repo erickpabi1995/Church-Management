@@ -15,7 +15,7 @@ const style = {
 };
 
 const sectionHeaderStyle = {
-  backgroundColor: 'rgba(91 111 127)',
+  backgroundColor: "rgb(51, 121, 155)",
   color: '#fff',
   padding: '8px',
   borderRadius: '4px',

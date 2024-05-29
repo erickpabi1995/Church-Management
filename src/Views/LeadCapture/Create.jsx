@@ -2,8 +2,8 @@ import { MenuItem, TextField, Grid, Autocomplete } from '@mui/material';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const Create = ({ formik, locations, groups, status }) => {
-  const [imagePreview, setImagePreview] = useState(null);
+const Create = ({ formik, locations, groups, status,newItem }) => {
+  const [imagePreview, setImagePreview] = useState(newItem.profile ? newItem.profile :null);
 
   const groupAutoComplete = [
     ...groups.map((item) => ({
@@ -183,7 +183,10 @@ const Create = ({ formik, locations, groups, status }) => {
             <input
               type="file"
               name="profile"
-              onChange={handleImageChange}
+              onChange={(event) => {
+                handleImageChange(event);
+                formik.setFieldValue("profile", event.currentTarget.files[0]);
+              }}
               style={{ marginTop: '8px', marginBottom: '8px' }}
             />
             {imagePreview && (
@@ -193,6 +196,8 @@ const Create = ({ formik, locations, groups, status }) => {
                 style={{ marginTop: '8px', maxHeight: '200px' }}
               />
             )}
+
+          
           </div>
           <div className="dialoglabel">
             <p>Location *</p>

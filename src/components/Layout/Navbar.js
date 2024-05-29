@@ -11,9 +11,9 @@ const Navbar = () => {
     <div>
       <div className="navbar bg-base-100">
         <div className="flex-1">
-          <a href="/#" className="btn btn-ghost text-xl">
-            TDHC MOBOLE NO.1 ASSEMBLY
-          </a>
+          <h3 className="btn btn-ghost text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-black hover:from-black hover:to-gray-800 transition duration-300">
+            TDHC MOBILE NO.1 ASSEMBLY
+          </h3>
         </div>
         <div className="flex-none">
           <div className="dropdown dropdown-end">

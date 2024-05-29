@@ -24,7 +24,9 @@ const CreateModal = ({
   setNewItem,
   groups,
   locations,
-  status
+  status,
+  placeOfWork,
+  id,
 }) => {
 
   const formik = useFormik({
@@ -42,7 +44,11 @@ const CreateModal = ({
       location: newItem?.location,
       digitalAddress: newItem?.digitalAddress,
       status:newItem.status,
-      group:groupSelect
+      group:groupSelect,
+      placeOfWork:newItem?.placeOfWork,
+      otherName:newItem?.otherName,
+    
+
     },
     validationSchema: Yup.object({
       firstName: Yup.string().required('Required'),
@@ -74,12 +80,12 @@ const CreateModal = ({
         className="bg-gradient-to-r from-[#1378A526] to-[#005EA900] border border-solid border-[#1378A54A] shadow-lg w-full"
         open={showCreateForm}
         onClose={() => handleCreateEdit(false)}
-        maxWidth="sm"
+        maxWidth="md"
         fullWidth
       >
         <div className="flex justify-between">
           <div className="bg-gradient-to-r from-[#1378A526] to-[#005EA900] border border-solid border-[#1378A54A] shadow-lg w-full">
-            <DialogTitle>Edit Member</DialogTitle>
+            <DialogTitle>{id ? 'Edit Member' :'Add Member' }</DialogTitle>
           </div>
         </div>
 
