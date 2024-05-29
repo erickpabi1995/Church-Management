@@ -9,6 +9,8 @@ import { Alert, IconButton,Snackbar } from '@mui/material';
 
 const LeadCapture = () => {
   const navigate = useNavigate();
+  const [maritalStatusOptions, setMaritalStatusOptions] = useState([]);
+  const [MembersReport, setMembersReport] = useState([]);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [count, setCount] = useState(0);
@@ -201,6 +203,44 @@ const LeadCapture = () => {
       });
   }, [paginationModel.page]);
 
+
+
+
+  const fetchDataWithSearchParams = async () => {
+    setLoadScreen(true);
+    const occupation = document.getElementById('occupation_search').value;
+    const location = document.getElementById('location_search').value;
+    const phone_number = document.getElementById('phone_number_search').value;
+    const status = document.getElementById('church_status_search').value;
+    // const digital_address = document.getElementById('digital_address_search').value;
+    const search=document.getElementById('search').value;
+
+    const queryParams = new URLSearchParams({
+      occupation: occupation,
+      location: location,
+      phone_number: phone_number,
+      status: status,
+      // digital_address: digital_address,
+      search:search
+    }).toString();
+
+    try {
+      const res = await Api().get(`/members?page=${paginationModel.page + 1}&${queryParams}`);
+
+      setMembers(res.data.data.results);
+      setCount(res.data.data.count);
+      setLoadScreen(false);
+    } catch (error) {
+      setLoadScreen(false);
+      setOpenSnackbar(true);
+      setAlert({
+        open: true,
+        message: 'Error in fetching',
+        severity: 'error',
+      });
+    }
+  };
+
   const Literals = async () => {
     await Api()
       .get(`/literals/all`)
@@ -208,6 +248,8 @@ const LeadCapture = () => {
         setGroups(res.data.data.groups);
         setStatus(res.data.data.statuses)
         setLocations(res.data.data.locations)
+        setMaritalStatusOptions(res.data.data.statuses); 
+
       })
       .catch(() => {
         setOpenSnackbar(true);
@@ -218,6 +260,30 @@ const LeadCapture = () => {
         });
       });
   };
+  
+
+  const MembersReports = async () => {
+ 
+    await Api()
+      .get(`/members/reports/`)
+      .then((res) => {
+        setMembersReport(res.data.data); 
+
+        console.log(res.data.data)
+
+      })
+      .catch(() => {
+        setOpenSnackbar(true);
+        setAlert({
+          open: true,
+          message: 'Error in fetching members reports',
+          severity: 'error',
+        });
+      });
+  };
+
+  
+  
 
 
   const getDetail = (val) => {
@@ -229,6 +295,7 @@ const LeadCapture = () => {
       id: item.id,
     })),)
   };
+
 
 
   const handleCreateEdit = (val, selected_id) => {
@@ -259,6 +326,9 @@ const LeadCapture = () => {
     navigate('/app/farming/sectors');
   };
 
+
+  
+
   useEffect(() => {
     let active = true;
 
@@ -266,6 +336,7 @@ const LeadCapture = () => {
       setLoadScreen(true);
       FarmData();
       Literals();
+      MembersReports();
       localStorage.removeItem('leadId');
       localStorage.removeItem('leadIds');
       if (!active) {
@@ -326,53 +397,47 @@ const LeadCapture = () => {
       <div className=" flex mt-4">
         <Button.Group className="">
           <Button size="xs" color="gray" className="capitalize font-bold">
-            Total Members
+            Total Members 
             <Badge color="gray" className="ml-2">
-              1
+            {MembersReport.totalMembers}
             </Badge>
           </Button>
-          <Button size="xs" color="gray" className="capitalize font-bold">
-            Status
-            <Badge color="gray" className="ml-2">
-              8
-            </Badge>
-          </Button>
-          <Button size="xs" color="gray" className="capitalize font-bold">
-            Location
-            <Badge color="gray" className="ml-2">
-              1
-            </Badge>
-          </Button>
+          
+        
         </Button.Group>
 
         <Button.Group className="ml-5">
           <Button size="xs" color="gray" className="capitalize font-bold">
-            total members
+            Working Members
             <Badge color="gray" className="ml-2">
-              173,097
+              {MembersReport.totalMembersWithOccupation}
             </Badge>
           </Button>
           <Button size="xs" color="gray" className="capitalize font-bold">
             baptized members
             <Badge color="gray" className="ml-2">
-              1,097
+              {MembersReport.totalMembersBaptised}
             </Badge>
           </Button>
-          <Button size="xs" color="gray" className="capitalize font-bold">
-            occupation 
-            <Badge color="gray" className="ml-2">
-              172,000
-            </Badge>
-          </Button>
+          
         </Button.Group>
 
         <Button.Group className="ml-6">
           <Button size="xs" color="gray" className="capitalize font-bold">
-            active members
+            Active Members
             <Badge color="gray" className="ml-2">
-              1
+              {MembersReport.activeMembers}
             </Badge>
           </Button>
+          
+        </Button.Group>
+
+        <Button.Group className="ml-6">
+          <Button size="xs" color="gray" className="capitalize font-bold">
+            View More
+            
+          </Button>
+          
         </Button.Group>
       </div>
       <hr className=" h-[1.5px]  bg-gray-200 border-0  mt-4" />
@@ -399,6 +464,7 @@ const LeadCapture = () => {
           <path d="M21 21l-4.35-4.35" />
         </svg>
       </div>
+      
       <input
         type="text"
         id="occupation_search"
@@ -468,12 +534,20 @@ const LeadCapture = () => {
           <path d="M21 21l-4.35-4.35" />
         </svg>
       </div>
-      <input
-        type="text"
-        id="marital_status_search"
-        className="listInput"
-        placeholder="Search by marital_status"
-      />
+      <select
+          id="church_status_search"
+          className="listInput"
+          defaultValue="" 
+          onChange={(e) => {
+          }}
+        >
+          <option value="">Search by  status</option>
+          {maritalStatusOptions.map((status) => (
+            <option key={status.id} value={status.id}>
+              {status.name}
+            </option>
+          ))}
+        </select>
     </div>
 
     <div className="relative mr-24">
@@ -494,16 +568,18 @@ const LeadCapture = () => {
       </div>
       <input
         type="text"
-        id="digital_address_search"
+        id="search"
         className="listInput"
-        placeholder="Search by First Name / Last Name / ID"
+        placeholder="First Name / Last Name / ID"
       />
     </div>
 
     <button
       type="button"
       className="create-button ml-2"
-      onClick=""
+      onClick={fetchDataWithSearchParams}
+      
+     
     >
       <svg
         viewBox="0 0 1024 1024"
