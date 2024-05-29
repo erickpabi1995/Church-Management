@@ -268,9 +268,6 @@ const LeadCapture = () => {
       .get(`/members/reports/`)
       .then((res) => {
         setMembersReport(res.data.data); 
-
-        console.log(res.data.data)
-
       })
       .catch(() => {
         setOpenSnackbar(true);
@@ -290,7 +287,7 @@ const LeadCapture = () => {
     let selectedItem = members.find((item) => item?.id === val);
     setNewItem(selectedItem);
     setId(selectedItem.id)
-    setGroupSelect( selectedItem?.groupsObj?.map((item) => ({
+    setGroupSelect( selectedItem?.groupObj?.map((item) => ({
       label: `${item.name}`,
       id: item.id,
     })),)
