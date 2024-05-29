@@ -60,16 +60,13 @@ const MembersReportModal = ({ open, handleClose, reportData }) => {
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell>Total leadCapture</TableCell>
+                <TableCell>Total Members</TableCell>
                 <TableCell align="right">{reportData.totalMembers}</TableCell>
               </TableRow>
-              {/* <TableRow>
-              <TableCell colSpan={2} style={sectionHeaderStyle}><strong>INFO</strong></TableCell>
-
-              </TableRow> */}
+             
 
               <TableRow>
-                <TableCell>Total leadCapture Baptised</TableCell>
+                <TableCell>Total Members Baptised</TableCell>
                 <TableCell align="right">{reportData.totalMembersBaptised}</TableCell>
               </TableRow>
               <TableRow>
