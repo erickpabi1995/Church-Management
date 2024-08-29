@@ -86,7 +86,8 @@ const Login = () => {
     };
 
     
-    document.cookie = "authToken" + '=; Max-Age=-99999999;';
+    document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+
 
     if (loginMail === "" || password === "") {
       setOpen(true);
@@ -95,6 +96,7 @@ const Login = () => {
         message: "Both fields cannot be empty",
         severity: "error",
       });
+
     } else {
       setloading(true);
       auth
