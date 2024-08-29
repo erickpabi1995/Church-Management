@@ -1,3 +1,4 @@
+import React, {  useEffect } from 'react';
 import { Modal } from 'flowbite-react';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin6Line } from 'react-icons/ri';
@@ -17,6 +18,12 @@ const ListData = ({
   loading,
   handleDelete,
 }) => {
+  useEffect(() => {
+    // Call a function to fetch data when the page changes
+    // This assumes you have a function that fetches data based on the page number
+    // e.g., fetchData(page);
+  }, [page]);
+
   return (
     <>
       <Modal size={'lg'} show={openModal} onClose={() => handleOpenModal(false)}>
@@ -36,7 +43,7 @@ const ListData = ({
                 Cancel
               </button>
               <button type="submit" className="warning-button" onClick={() => handleDelete()}>
-                Delete{' '}
+                Delete
               </button>
             </div>
           </div>
@@ -50,6 +57,8 @@ const ListData = ({
               <Table.HeadCell className="capitalize text-sm bg-white text-left sticky top-0">ID</Table.HeadCell>
               <Table.HeadCell className="capitalize text-sm bg-white text-left sticky top-0">first name</Table.HeadCell>
               <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">last name</Table.HeadCell>
+              <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">gender</Table.HeadCell>
+              <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">No.Children</Table.HeadCell>
               <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">marital status</Table.HeadCell>
               <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">phone number</Table.HeadCell>
               <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">baptismal date</Table.HeadCell>
@@ -60,49 +69,54 @@ const ListData = ({
               <Table.HeadCell className="capitalize font-normal bg-white text-sm text-center sticky top-0">actions</Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y">
-              {members &&
-                members.map((item) => (
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800" key={item.id}>
-                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-sm cursor-pointer text-left" onClick={handleSectors}>
-                      {item.uniqueId}
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-sm cursor-pointer text-left" onClick={handleSectors}>
-                      {item.firstName}
-                    </Table.Cell>
-                    <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
-                      {item.lastName}
-                    </Table.Cell>
-                    <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
-                      {item.maritalStatus}
-                    </Table.Cell>
-                    <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
-                      {item.phoneNumber}
-                    </Table.Cell>
-                    <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
-                      {item.baptismalDate}
-                    </Table.Cell>
-                    <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
-                      {item.groupObj?.map((group) => group.name).join(', ')}
-                    </Table.Cell>
-                                        <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
-                      {item.locationName}
-                    </Table.Cell>
-                    <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
-                      {item.digitalAddress}
-                    </Table.Cell>
-                    <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
-                      {item.profile ? (
-                        <img cla src={item.profile} alt="Profile" className="h-10 w-10 rounded-full profile-image" />
-                      ) : (
-                        <span>No Image</span>
-                      )}
-                    </Table.Cell>
-                    <Table.Cell className="flex justify-center items-center text-sm">
-                      <RiDeleteBin6Line onClick={() => handleOpenModal(true, item.id)} />
-                      <FiEdit2 className="ml-4" onClick={() => handleCreateEdit(true, item.id)} />
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
+              {members.map((item) => (
+                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800" key={item.id}>
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-sm cursor-pointer text-left" onClick={handleSectors}>
+                    {item.uniqueId}
+                  </Table.Cell>
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-sm cursor-pointer text-left" onClick={handleSectors}>
+                    {item.firstName}
+                  </Table.Cell>
+                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                    {item.lastName}
+                  </Table.Cell>
+                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                    {item.gender}
+                  </Table.Cell>
+                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                    {item.numberOfChildren > 0 ? item.numberOfChildren : '-'}
+                  </Table.Cell>
+                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                    {item.maritalStatus}
+                  </Table.Cell>
+                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                    {item.phoneNumber}
+                  </Table.Cell>
+                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                    {item.baptismalDate}
+                  </Table.Cell>
+                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                    {item.groupObj?.map((group) => group.name).join(', ')}
+                  </Table.Cell>
+                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                    {item.locationName}
+                  </Table.Cell>
+                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                    {item.digitalAddress}
+                  </Table.Cell>
+                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                    {item.profile ? (
+                      <img src={item.profile} alt="Profile" className="h-10 w-10 rounded-full profile-image" />
+                    ) : (
+                      <span>No Image</span>
+                    )}
+                  </Table.Cell>
+                  <Table.Cell className="flex justify-center items-center text-sm">
+                    <RiDeleteBin6Line onClick={() => handleOpenModal(true, item.id)} />
+                    <FiEdit2 className="ml-4" onClick={() => handleCreateEdit(true, item.id)} />
+                  </Table.Cell>
+                </Table.Row>
+              ))}
             </Table.Body>
           </Table>
         ) : (
@@ -113,19 +127,18 @@ const ListData = ({
         )}
       </div>
 
-      {members.length > 0 ? (
+      {members.length > 0 && (
         <div className="flex justify-center mt-4">
           <Pagination
-            count={Math.floor(count / 10) + 1}
+            count={Math.ceil(count / 10)} 
             page={page}
             shape="rounded"
             color="primary"
             size="small"
-            onChange={handleChange}
+            onChange={(event, value) => handleChange(value)} 
+           
           />
         </div>
-      ) : (
-        ''
       )}
     </>
   );

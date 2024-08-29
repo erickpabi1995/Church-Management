@@ -2,8 +2,8 @@ import { MenuItem, TextField, Grid, Autocomplete } from '@mui/material';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const Create = ({ formik, locations, groups, status,newItem }) => {
-  const [imagePreview, setImagePreview] = useState(newItem.profile ? newItem.profile :null);
+const Create = ({ formik, locations, groups, status, newItem }) => {
+  const [imagePreview, setImagePreview] = useState(newItem.profile ? newItem.profile : null);
 
   const groupAutoComplete = [
     ...groups.map((item) => ({
@@ -42,7 +42,6 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
             <TextField
               autoFocus
               name="firstName"
-              invalid={!!formik.errors.firstName}
               value={formik.values.firstName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -59,23 +58,59 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
             <TextField
               autoFocus
               name="lastName"
-              invalid={!!formik.errors.lastName}
               value={formik.values.lastName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               size="small"
               error={Boolean(formik.touched.lastName && formik.errors.lastName)}
+              fullWidth
               helperText={formik.errors.lastName && formik.touched.lastName && String(formik.errors.lastName)}
+              variant="outlined"
+            />
+          </div>
+
+          <div className="dialoglabel">
+            <p>Gender *</p>
+            <TextField
+              autoFocus
+              select
+              name="gender"
+              size="small"
+              value={formik.values.gender}
+              onChange={formik.handleChange}
+              fullWidth
+              error={Boolean(formik.touched.gender && formik.errors.gender)}
+              onBlur={formik.handleBlur}
+              helperText={formik.errors.gender && formik.touched.gender && String(formik.errors.gender)}
+              variant="outlined"
+            >
+              <MenuItem value="">...Choose</MenuItem>
+              <MenuItem value="male">Male</MenuItem>
+              <MenuItem value="female">Female</MenuItem>
+            </TextField>
+          </div>
+
+          <div className="dialoglabel">
+            <p>No. Children</p>
+            <TextField
+              autoFocus
+              name="numberOfChildren"
+              id="numberOfChildren"
+              size="small"
+              value={formik.values.numberOfChildren } 
+              
+
+              onChange={formik.handleChange}
+              type="number"
               fullWidth
               variant="outlined"
             />
           </div>
           <div className="dialoglabel">
-            <p>Email </p>
+            <p>Email</p>
             <TextField
               autoFocus
               name="email"
-              id="name"
               size="small"
               value={formik.values.email}
               onChange={formik.handleChange}
@@ -85,7 +120,7 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
             />
           </div>
           <div className="dialoglabel">
-            <p>Other Name </p>
+            <p>Other Name</p>
             <TextField
               autoFocus
               name="otherName"
@@ -101,7 +136,6 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
             <TextField
               autoFocus
               name="phoneNumber"
-              id="phoneNumber"
               size="small"
               type="text"
               value={formik.values.phoneNumber}
@@ -111,7 +145,7 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
             />
           </div>
           <div className="dialoglabel">
-            <p>Marital Status </p>
+            <p>Marital Status</p>
             <TextField
               autoFocus
               select
@@ -120,9 +154,8 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
               value={formik.values.maritalStatus}
               onChange={formik.handleChange}
               fullWidth
-              invalid={!!formik.errors.maritalStatus}
-              onBlur={formik.handleBlur}
               error={Boolean(formik.touched.maritalStatus && formik.errors.maritalStatus)}
+              onBlur={formik.handleBlur}
               helperText={formik.errors.maritalStatus && formik.touched.maritalStatus && String(formik.errors.maritalStatus)}
               variant="outlined"
             >
@@ -139,9 +172,7 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
               options={groupAutoComplete}
               name="group"
               multiple
-              onChange={(e, value) => {
-                formik.setFieldValue('group', value);
-              }}
+              onChange={(e, value) => formik.setFieldValue('group', value)}
               value={formik.values.group}
               renderOption={(props, item) => (
                 <li {...props} key={item.id}>
@@ -166,7 +197,7 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
         </Grid>
         <Grid item xs={6}>
           <div className="dialoglabel">
-            <p>Secondary Phone Number </p>
+            <p>Secondary Phone Number</p>
             <TextField
               autoFocus
               name="secondaryPhoneNumber"
@@ -179,7 +210,7 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
             />
           </div>
           <div className="dialoglabel">
-            <p>Profile </p>
+            <p>Profile</p>
             <input
               type="file"
               name="profile"
@@ -196,32 +227,32 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
                 style={{ marginTop: '8px', maxHeight: '200px' }}
               />
             )}
-
-          
           </div>
           <div className="dialoglabel">
             <p>Location *</p>
-            <TextField
-              autoFocus
-              name="location"
-              select
-              size="small"
+            <Autocomplete
+              freeSolo
+              options={locations.map((item) => item.name)}
               value={formik.values.location}
-              onChange={formik.handleChange}
-              invalid={!!formik.errors.location}
-              onBlur={formik.handleBlur}
-              error={Boolean(formik.touched.location && formik.errors.location)}
-              fullWidth
-              variant="outlined"
-              helperText={formik.errors.location && formik.touched.location && String(formik.errors.location)}
-            >
-              <MenuItem value="">...Choose</MenuItem>
-              {locations?.map((item) => (
-                <MenuItem value={item.id} key={item.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
-            </TextField>
+              onChange={(event, newValue) => {
+                formik.setFieldValue('location', newValue);
+              }}
+              onInputChange={(event, newInputValue) => {
+                formik.setFieldValue('location', newInputValue);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  name="location"
+                  size="small"
+                  fullWidth
+                  variant="outlined"
+                  error={Boolean(formik.touched.location && formik.errors.location)}
+                  helperText={formik.errors.location && formik.touched.location && String(formik.errors.location)}
+                  onBlur={formik.handleBlur}
+                />
+              )}
+            />
           </div>
 
           <div className="dialoglabel">
@@ -249,7 +280,7 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
           </div>
 
           <div className="dialoglabel">
-            <p>Place of Work </p>
+            <p>Place of Work</p>
             <TextField
               autoFocus
               name="placeOfWork"
@@ -284,9 +315,8 @@ const Create = ({ formik, locations, groups, status,newItem }) => {
               size="small"
               value={formik.values.status}
               onChange={formik.handleChange}
-              invalid={!!formik.errors.status}
-              onBlur={formik.handleBlur}
               error={Boolean(formik.touched.status && formik.errors.status)}
+              onBlur={formik.handleBlur}
               fullWidth
               variant="outlined"
               helperText={formik.errors.status && formik.touched.status && String(formik.errors.status)}
@@ -310,6 +340,10 @@ Create.propTypes = {
   locations: PropTypes.array.isRequired,
   groups: PropTypes.array.isRequired,
   status: PropTypes.array.isRequired,
+  gender: PropTypes.string.isRequired,
+  numberOfChildren: PropTypes.string.isRequired,
+  newItem: PropTypes.object,
+
 };
 
 export default Create;

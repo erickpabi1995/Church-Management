@@ -47,6 +47,9 @@ const CreateModal = ({
       group:groupSelect,
       placeOfWork:newItem?.placeOfWork,
       otherName:newItem?.otherName,
+      gender:newItem?.gender,
+      numberOfChildren:newItem?.numberOfChildren,
+      
     
 
     },
@@ -54,6 +57,9 @@ const CreateModal = ({
       firstName: Yup.string().required('Required'),
       lastName: Yup.string().required('Required'),
       location: Yup.string().required('Required'),
+      gender: Yup.string().required('Required'),
+      numberOfChildren: Yup.string().required('Required'),
+      
         group: Yup.array()
             .of(
                 Yup.object().shape({
@@ -69,6 +75,8 @@ const CreateModal = ({
     onSubmit: (values, { resetForm }) => {
       handleSubmit(values);
       resetForm();
+
+    
     },
   });
 
@@ -136,10 +144,16 @@ CreateModal.propTypes = {
     secondaryEmail: PropTypes.string.isRequired,
     phoneNumber: PropTypes.string.isRequired,
     secondaryPhoneNumber: PropTypes.string.isRequired,
+    gener: PropTypes.string.isRequired,
     note: PropTypes.string.isRequired,
+    numberOfChildren: PropTypes.string.isRequired,
+
+    
   }),
   leadSources: PropTypes.array.isRequired,
   leadTypes: PropTypes.array.isRequired,
   showCreateForm: PropTypes.bool.isRequired,
+  numberOfChildren: PropTypes.bool.isRequired,
   setNewItem: PropTypes.func.isRequired,
+  
 };

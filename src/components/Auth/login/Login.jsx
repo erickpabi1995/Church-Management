@@ -85,9 +85,9 @@ const Login = () => {
       password: password?.trim(),
     };
 
-    localStorage.clear();
+    
+    document.cookie = "authToken" + '=; Max-Age=-99999999;';
 
-    sessionStorage.clear()
     if (loginMail === "" || password === "") {
       setOpen(true);
       setAlert({

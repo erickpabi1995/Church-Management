@@ -33,11 +33,14 @@ const LeadCapture = () => {
     email: '',
     otherName: '',
     lastName: '',
+    gender: '',
+    numberOfChildren: 0,
+
   });
   const [loadScreen, setLoadScreen] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 10,
+    pageSize: 100,
     page: 0,
   });
   const [members, setMembers] = useState([]);
@@ -65,6 +68,7 @@ const LeadCapture = () => {
   };
 
   const handleChange = (value) => {
+
     setPage(value);
   };
 
@@ -86,6 +90,57 @@ const LeadCapture = () => {
 
 const handleOpenReportModal = () => setOpenReportModal(true);
 const handleCloseReportModal = () => setOpenReportModal(false);
+
+
+
+
+const handleExportReport = useCallback(async () => {
+  try {
+
+    const occupation = document.getElementById('occupation_search').value;
+    const location = document.getElementById('location_search').value;
+    const phone_number = document.getElementById('phone_number_search').value;
+    const status = document.getElementById('church_status_search').value;
+    const gender = document.getElementById('gender_search').value;
+    const search = document.getElementById('search').value;
+
+    // Build query parameters
+    const queryParams = new URLSearchParams({
+      occupation,
+      location,
+      phone_number,
+      status,
+      gender,
+      search
+    }).toString();
+
+
+    const response = await Api().get(`members/export-members/?${queryParams}`, { responseType: 'blob' });
+    
+    
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'members.xlsx'); 
+
+    document.body.appendChild(link);
+    link.click();
+
+    
+    link.parentNode.removeChild(link);    
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    // Handle error case
+    setLoadScreen(false);
+    setOpenSnackbar(true);
+    setAlert({
+      open: true,
+      message: 'Error in exporting data',
+      severity: 'error',
+    });
+  }
+}, []);
 
 const handleSubmit = async (e) => {
   const formData = new FormData();
@@ -309,8 +364,11 @@ const handleSubmit = async (e) => {
 
 
 
+
+
   const handleCreateEdit = (val, selected_id) => {
     setShowCreateForm(val);
+    Literals();
     setId(0)
     setNewItem({
       
@@ -328,6 +386,8 @@ const handleSubmit = async (e) => {
       email: '',
       otherName: '',
       lastName: '',
+      gender: '',
+      numberOfChildren: 0,
     });
 
   
@@ -449,6 +509,16 @@ const handleSubmit = async (e) => {
           View More
         </Button>
       </Button.Group>
+      <Button.Group className="ml-6">
+        <Button
+          size="xs"
+          color="gray"
+          className="capitalize font-bold"
+          onClick={handleExportReport}
+        >
+          Export
+        </Button>
+      </Button.Group>
    
    
   <MembersReportModal
@@ -508,14 +578,23 @@ const handleSubmit = async (e) => {
           <path d="M21 21l-4.35-4.35" />
         </svg>
       </div>
-      <input
-        type="text"
-        id="location_search"
-        className="listInput"
-        placeholder="Search by location"
-        onChange={(e) => setSearchValue(e.target.value)}
-        onKeyPress={handleKeyPress}
-      />
+ 
+<select
+          id="location_search"
+          className="listInput"
+          defaultValue="" 
+          onChange={(e) => {
+          }}
+          onKeyPress={handleKeyPress}
+        >
+          <option value="">Search by location</option>
+          
+          {locations.map((location) => (
+            <option key={location.id} value={location.id}>
+              {location.name}
+            </option>
+          ))}
+        </select>
     </div>
     <div className="relative mr-24">
       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -661,6 +740,24 @@ const handleSubmit = async (e) => {
       Search
     </button>
 
+    <button
+      type="button"
+      className="create-button ml-2"
+      onClick={handleExportReport}
+    >
+    <svg
+  viewBox="0 0 24 24"
+  fill="currentColor"
+  height="1.2em"
+  width="2em"
+>
+  <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V8l-4-4zm-2 12h-2v-4H8l4-4 4 4h-2v4z" />
+  <path d="M4 20v-2h12v2H4z" />
+</svg>
+
+      <span style={{ marginLeft: '0.5rem' }}>Export</span>
+
+    </button>
 
     <button
       type="button"
@@ -682,6 +779,11 @@ const handleSubmit = async (e) => {
       Add<span style={{ marginLeft: '0.5rem' }}>Member</span>
 
     </button>
+
+
+
+
+ 
   </div>
 </div>
 
