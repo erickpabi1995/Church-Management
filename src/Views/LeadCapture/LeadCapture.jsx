@@ -40,7 +40,7 @@ const LeadCapture = () => {
   const [loadScreen, setLoadScreen] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 100,
+    pageSize: 15, // Set to 15 per page
     page: 0,
   });
   const [members, setMembers] = useState([]);
@@ -57,8 +57,10 @@ const LeadCapture = () => {
   const [anchor, setAnchor] = useState(null);
   const [id, setId] = useState(0);
   const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [page, setPage] = useState(1);
   const [groupSelect, setGroupSelect] = useState([]);
+  const [isFiltered, setIsFiltered] = useState(false);
 
   const handleOpenModal = (value, selected_id) => {
 
@@ -68,8 +70,8 @@ const LeadCapture = () => {
   };
 
   const handleChange = (value) => {
-
     setPage(value);
+    setPaginationModel((prev) => ({ ...prev, page: value - 1, pageSize: 15 })); // Always use 15 per page
   };
 
   const handleDetail = (val, selected_id) => {
@@ -242,58 +244,73 @@ const handleSubmit = async (e) => {
 
   const FarmData = useCallback(async () => {
     await Api()
-      .get(`/members?page=${paginationModel.page + 1}`)
+      .get(`/members?page=${paginationModel.page + 1}&page_size=${paginationModel.pageSize}`)
       .then((res) => {
         setMembers(res.data.data.results);
         setCount(res.data.data.count);
         setLoadScreen(false);
       })
-      .catch(() => {
+      .catch((error) => {
         setLoadScreen(false);
-        setOpenSnackbar(true);
-        setAlert({
-          open: true,
-          message: 'Error in fetching',
-          severity: 'error',
-        });
+        if (error?.response?.data?.detail === 'Invalid page.') {
+          // Reset to last valid page
+          const lastPage = Math.max(1, Math.ceil(count / paginationModel.pageSize));
+          setPaginationModel((prev) => ({ ...prev, page: lastPage - 1, pageSize: 15 }));
+          setPage(lastPage);
+        } else {
+          setOpenSnackbar(true);
+          setAlert({
+            open: true,
+            message: 'Error in fetching',
+            severity: 'error',
+          });
+        }
       });
-  }, [paginationModel.page]);
+  }, [paginationModel.page, count, paginationModel.pageSize]);
 
 
 
 
   const fetchDataWithSearchParams = async () => {
+    setIsFiltered(true);
     setLoadScreen(true);
     const occupation = document.getElementById('occupation_search').value;
     const location = document.getElementById('location_search').value;
     const phone_number = document.getElementById('phone_number_search').value;
     const status = document.getElementById('church_status_search').value;
     const gender = document.getElementById('gender_search').value;
-    const search=document.getElementById('search').value;
+    const group = document.getElementById('group_search').value;
+    const search = document.getElementById('search').value;
 
     const queryParams = new URLSearchParams({
-      occupation: occupation,
-      location: location,
-      phone_number: phone_number,
-      status: status,
-      gender: gender,
-      search:search
+      occupation,
+      location,
+      phone_number,
+      status,
+      gender,
+      group,
+      search
     }).toString();
 
     try {
-      const res = await Api().get(`/members?page=${paginationModel.page + 1}&${queryParams}`);
-
+      const res = await Api().get(`/members?page=${paginationModel.page + 1}&page_size=${paginationModel.pageSize}&${queryParams}`);
       setMembers(res.data.data.results);
       setCount(res.data.data.count);
       setLoadScreen(false);
     } catch (error) {
       setLoadScreen(false);
-      setOpenSnackbar(true);
-      setAlert({
-        open: true,
-        message: 'Error in fetching',
-        severity: 'error',
-      });
+      if (error?.response?.data?.detail === 'Invalid page.') {
+        const lastPage = Math.max(1, Math.ceil(count / paginationModel.pageSize));
+        setPaginationModel((prev) => ({ ...prev, page: lastPage - 1, pageSize: 15 }));
+        setPage(lastPage);
+      } else {
+        setOpenSnackbar(true);
+        setAlert({
+          open: true,
+          message: 'Error in fetching',
+          severity: 'error',
+        });
+      }
     }
   };
 
@@ -403,25 +420,24 @@ const handleSubmit = async (e) => {
 
   useEffect(() => {
     let active = true;
-
     (async () => {
       setLoadScreen(true);
-      FarmData();
-      Literals();
-      MembersReports();
+      if (!isFiltered) {
+        await FarmData();
+      }
+      await Literals();
+      await MembersReports();
       localStorage.removeItem('leadId');
       localStorage.removeItem('leadIds');
       if (!active) {
         return;
       }
-
       setLoadScreen(false);
     })();
-
     return () => {
       active = false;
     };
-  }, [paginationModel.page, FarmData]);
+  }, [paginationModel.page, FarmData, isFiltered]);
 
   return (
     <>
@@ -556,7 +572,7 @@ const handleSubmit = async (e) => {
         type="text"
         id="occupation_search"
         className="listInput"
-        placeholder="Search by Occupation"
+        placeholder="Occupation"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
         onKeyPress={handleKeyPress}
@@ -587,7 +603,7 @@ const handleSubmit = async (e) => {
           }}
           onKeyPress={handleKeyPress}
         >
-          <option value="">Search by location</option>
+          <option value="">Location</option>
           
           {locations.map((location) => (
             <option key={location.id} value={location.id}>
@@ -616,7 +632,7 @@ const handleSubmit = async (e) => {
         type="text"
         id="phone_number_search"
         className="listInput"
-        placeholder="Search by phone_number"
+        placeholder="Phone Number"
         onChange={(e) => setSearchValue(e.target.value)}
         onKeyPress={handleKeyPress}
       />
@@ -646,7 +662,7 @@ const handleSubmit = async (e) => {
           }}
           onKeyPress={handleKeyPress}
         >
-          <option value="">Search by  Gender</option>
+          <option value="">Gender</option>
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
@@ -676,7 +692,7 @@ const handleSubmit = async (e) => {
           }}
           onKeyPress={handleKeyPress}
         >
-          <option value="">Search by  status</option>
+          <option value="">Status</option>
           {maritalStatusOptions.map((status) => (
             <option key={status.id} value={status.id}>
               {status.name}
@@ -701,13 +717,45 @@ const handleSubmit = async (e) => {
           <path d="M21 21l-4.35-4.35" />
         </svg>
       </div>
+      <select
+        id="group_search"
+        className="listInput"
+        defaultValue=""
+        onChange={() => {}}
+        onKeyPress={handleKeyPress}
+      >
+        <option value="">Group</option>
+        {groups.map((group) => (
+          <option key={group.id} value={group.id}>
+            {group.name}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    <div className="relative mr-24">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg
+          fill="none"
+          stroke="#667085"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+          height="1em"
+          width="1em"
+        >
+          <path d="M19 11 A8 8 0 0 1 11 19 A8 8 0 0 1 3 11 A8 8 0 0 1 19 11 z" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+      </div>
       <input
         type="text"
         id="search"
         onChange={(e) => setSearchValue(e.target.value)}
         onKeyPress={handleKeyPress}
         className="listInput"
-        placeholder="First Name / Last Name / ID"
+        placeholder="Name / ID"
       />
     </div>
 
@@ -820,7 +868,7 @@ const handleSubmit = async (e) => {
           loading={loading}
           handleDelete={handleDelete}
           openDetailModal={openDetailModal}
-          page={page}
+          page={paginationModel.page + 1} // Pass 1-based page to List
           alert={alert}
         />
       </div>

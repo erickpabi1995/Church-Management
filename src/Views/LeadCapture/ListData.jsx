@@ -122,21 +122,20 @@ const ListData = ({
         ) : (
           <div>
             <Player src="https://lottie.host/5cf625e5-3dea-419f-8815-339aa533aa8d/yb6ZA0nz5Q.json" loop autoplay className="w-64 h-48" />
-            <p className="text-center">You haven’t created any member yet :(</p>
+            <p className="text-center">You haven’t created any member yet</p>
           </div>
         )}
       </div>
 
       {members.length > 0 && (
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-6 mb-8">
           <Pagination
-            count={Math.ceil(count / 10)} 
-            page={page}
+            count={Math.ceil(count / 15)} // Use 15 per page to match backend and UI
+            page={page} // page is 1-based, synced from parent
             shape="rounded"
             color="primary"
-            size="small"
+            size="medium" // Increased from small to medium
             onChange={(event, value) => handleChange(value)} 
-           
           />
         </div>
       )}
