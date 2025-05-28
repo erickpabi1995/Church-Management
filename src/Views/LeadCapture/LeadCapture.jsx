@@ -12,6 +12,7 @@ const LeadCapture = () => {
   const [MembersReport, setMembersReport] = useState([]);
   const [openReportModal, setOpenReportModal] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [occupationValue, setOccupationValue] = useState('');
   const [reportIsReady, SetreportIsReady] = useState(false);
 
 
@@ -98,7 +99,6 @@ const handleCloseReportModal = () => setOpenReportModal(false);
 
 const handleExportReport = useCallback(async () => {
   try {
-
     const occupation = document.getElementById('occupation_search').value;
     const location = document.getElementById('location_search').value;
     const phone_number = document.getElementById('phone_number_search').value;
@@ -106,15 +106,16 @@ const handleExportReport = useCallback(async () => {
     const gender = document.getElementById('gender_search').value;
     const search = document.getElementById('search').value;
 
-    // Build query parameters
-    const queryParams = new URLSearchParams({
-      occupation,
-      location,
-      phone_number,
-      status,
-      gender,
-      search
-    }).toString();
+    // Only add non-empty values to queryObj
+    const queryObj = {};
+    if (occupation) queryObj.occupation = occupation;
+    if (location) queryObj.location = location;
+    if (phone_number) queryObj.phone_number = phone_number;
+    if (status) queryObj.status = status;
+    if (gender) queryObj.gender = gender;
+    if (search) queryObj.search = search;
+
+    const queryParams = new URLSearchParams(queryObj).toString();
 
 
     const response = await Api().get(`members/export-members/?${queryParams}`, { responseType: 'blob' });
@@ -272,6 +273,8 @@ const handleSubmit = async (e) => {
 
 
   const fetchDataWithSearchParams = async () => {
+    // Reset to first page on new search
+    setPaginationModel((prev) => ({ ...prev, page: 0 }));
     setIsFiltered(true);
     setLoadScreen(true);
     const occupation = document.getElementById('occupation_search').value;
@@ -282,18 +285,20 @@ const handleSubmit = async (e) => {
     const group = document.getElementById('group_search').value;
     const search = document.getElementById('search').value;
 
-    const queryParams = new URLSearchParams({
-      occupation,
-      location,
-      phone_number,
-      status,
-      gender,
-      group,
-      search
-    }).toString();
+    // Only add non-empty values to queryObj
+    const queryObj = {};
+    if (occupation) queryObj.occupation = occupation;
+    if (location) queryObj.location = location;
+    if (phone_number) queryObj.phone_number = phone_number;
+    if (status) queryObj.status = status;
+    if (gender) queryObj.gender = gender;
+    if (group) queryObj.group = group;
+    if (search) queryObj.search = search;
+
+    const queryParams = new URLSearchParams(queryObj).toString();
 
     try {
-      const res = await Api().get(`/members?page=${paginationModel.page + 1}&page_size=${paginationModel.pageSize}&${queryParams}`);
+      const res = await Api().get(`/members?page=1&page_size=${paginationModel.pageSize}&${queryParams}`);
       setMembers(res.data.data.results);
       setCount(res.data.data.count);
       setLoadScreen(false);
@@ -573,8 +578,8 @@ const handleSubmit = async (e) => {
         id="occupation_search"
         className="listInput"
         placeholder="Occupation"
-        value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
+        value={occupationValue}
+        onChange={(e) => setOccupationValue(e.target.value)}
         onKeyPress={handleKeyPress}
       />
     </div>
@@ -756,6 +761,7 @@ const handleSubmit = async (e) => {
         onKeyPress={handleKeyPress}
         className="listInput"
         placeholder="Name / ID"
+        value={searchValue}
       />
     </div>
 

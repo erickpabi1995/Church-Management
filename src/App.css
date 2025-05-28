@@ -226,9 +226,17 @@ input::-webkit-inner-spin-button {
 
 
 .profile-image {
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
 .profile-image:hover {
-  transform: scale(5.10);
+  transform: scale(4); /* Increased from 2.5 to 4 for larger zoom */
+  box-shadow: 0 12px 48px rgba(0,0,0,0.30); /* Slightly stronger shadow for emphasis */
+  border: 2.5px solid #1378A5;
+  background: #fff;
+  z-index: 100;
+  position: relative;
 }
