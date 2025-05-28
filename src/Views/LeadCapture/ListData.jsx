@@ -71,40 +71,40 @@ const ListData = ({
             <Table.Body className="divide-y">
               {members.map((item) => (
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800" key={item.id}>
-                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-sm cursor-pointer text-left" onClick={handleSectors}>
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-sm cursor-pointer text-left" onClick={() => handleCreateEdit(true, item.id)}>
                     {item.uniqueId}
                   </Table.Cell>
-                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-sm cursor-pointer text-left" onClick={handleSectors}>
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 text-sm cursor-pointer text-left" onClick={() => handleCreateEdit(true, item.id)}>
                     {item.firstName}
                   </Table.Cell>
-                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                  <Table.Cell onClick={() => handleCreateEdit(true, item.id)} className="text-sm cursor-pointer text-center">
                     {item.lastName}
                   </Table.Cell>
-                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                  <Table.Cell onClick={() => handleCreateEdit(true, item.id)} className="text-sm cursor-pointer text-center">
                     {item.gender}
                   </Table.Cell>
-                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                  <Table.Cell onClick={() => handleCreateEdit(true, item.id)} className="text-sm cursor-pointer text-center">
                     {item.numberOfChildren > 0 ? item.numberOfChildren : '-'}
                   </Table.Cell>
-                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                  <Table.Cell onClick={() => handleCreateEdit(true, item.id)} className="text-sm cursor-pointer text-center">
                     {item.maritalStatus}
                   </Table.Cell>
-                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                  <Table.Cell onClick={() => handleCreateEdit(true, item.id)} className="text-sm cursor-pointer text-center">
                     {item.phoneNumber}
                   </Table.Cell>
-                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                  <Table.Cell onClick={() => handleCreateEdit(true, item.id)} className="text-sm cursor-pointer text-center">
                     {item.baptismalDate}
                   </Table.Cell>
-                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                  <Table.Cell onClick={() => handleCreateEdit(true, item.id)} className="text-sm cursor-pointer text-center">
                     {item.groupObj?.map((group) => group.name).join(', ')}
                   </Table.Cell>
-                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                  <Table.Cell onClick={() => handleCreateEdit(true, item.id)} className="text-sm cursor-pointer text-center">
                     {item.locationName}
                   </Table.Cell>
-                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                  <Table.Cell onClick={() => handleCreateEdit(true, item.id)} className="text-sm cursor-pointer text-center">
                     {item.digitalAddress}
                   </Table.Cell>
-                  <Table.Cell onClick={handleSectors} className="text-sm cursor-pointer text-center">
+                  <Table.Cell onClick={() => handleCreateEdit(true, item.id)} className="text-sm cursor-pointer text-center">
                     {item.profile ? (
                       <img src={item.profile} alt="Profile" className="h-10 w-10 rounded-full profile-image" />
                     ) : (
