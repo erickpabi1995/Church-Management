@@ -427,8 +427,40 @@ const handleSubmit = async (e) => {
     let active = true;
     (async () => {
       setLoadScreen(true);
-      if (!isFiltered) {
+      if (isFiltered) {
+        // If filtered, fetch with search params and current page
+        const occupation = document.getElementById('occupation_search')?.value || '';
+        const location = document.getElementById('location_search')?.value || '';
+        const phone_number = document.getElementById('phone_number_search')?.value || '';
+        const status = document.getElementById('church_status_search')?.value || '';
+        const gender = document.getElementById('gender_search')?.value || '';
+        const group = document.getElementById('group_search')?.value || '';
+        const search = document.getElementById('search')?.value || '';
+        const queryObj = {};
+        if (occupation) queryObj.occupation = occupation;
+        if (location) queryObj.location = location;
+        if (phone_number) queryObj.phone_number = phone_number;
+        if (status) queryObj.status = status;
+        if (gender) queryObj.gender = gender;
+        if (group) queryObj.group = group;
+        if (search) queryObj.search = search;
+        const queryParams = new URLSearchParams(queryObj).toString();
+        try {
+          const res = await Api().get(`/members?page=${paginationModel.page + 1}&page_size=${paginationModel.pageSize}&${queryParams}`);
+          setMembers(res.data.data.results);
+          setCount(res.data.data.count);
+        } catch (error) {
+          setOpenSnackbar(true);
+          setAlert({
+            open: true,
+            message: 'Error in fetching',
+            severity: 'error',
+          });
+        }
+        setLoadScreen(false);
+      } else {
         await FarmData();
+        setLoadScreen(false);
       }
       await Literals();
       await MembersReports();
@@ -437,7 +469,6 @@ const handleSubmit = async (e) => {
       if (!active) {
         return;
       }
-      setLoadScreen(false);
     })();
     return () => {
       active = false;
