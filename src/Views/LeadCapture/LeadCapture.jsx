@@ -62,6 +62,7 @@ const LeadCapture = () => {
   const [page, setPage] = useState(1);
   const [groupSelect, setGroupSelect] = useState([]);
   const [isFiltered, setIsFiltered] = useState(false);
+  const [searchParams, setSearchParams] = useState({}); // Store current search params
 
   const handleOpenModal = (value, selected_id) => {
 
@@ -244,8 +245,12 @@ const handleSubmit = async (e) => {
   };
 
   const FarmData = useCallback(async () => {
+    let queryParams = '';
+    if (isFiltered && Object.keys(searchParams).length > 0) {
+      queryParams = '&' + new URLSearchParams(searchParams).toString();
+    }
     await Api()
-      .get(`/members?page=${paginationModel.page + 1}&page_size=${paginationModel.pageSize}`)
+      .get(`/members?page=${paginationModel.page + 1}&page_size=${paginationModel.pageSize}${queryParams}`)
       .then((res) => {
         setMembers(res.data.data.results);
         setCount(res.data.data.count);
@@ -267,13 +272,12 @@ const handleSubmit = async (e) => {
           });
         }
       });
-  }, [paginationModel.page, count, paginationModel.pageSize]);
+  }, [paginationModel.page, count, paginationModel.pageSize, isFiltered, searchParams]);
 
 
 
 
   const fetchDataWithSearchParams = async () => {
-    // Reset to first page on new search
     setPaginationModel((prev) => ({ ...prev, page: 0 }));
     setIsFiltered(true);
     setLoadScreen(true);
@@ -285,7 +289,6 @@ const handleSubmit = async (e) => {
     const group = document.getElementById('group_search').value;
     const search = document.getElementById('search').value;
 
-    // Only add non-empty values to queryObj
     const queryObj = {};
     if (occupation) queryObj.occupation = occupation;
     if (location) queryObj.location = location;
@@ -295,10 +298,10 @@ const handleSubmit = async (e) => {
     if (group) queryObj.group = group;
     if (search) queryObj.search = search;
 
-    const queryParams = new URLSearchParams(queryObj).toString();
+    setSearchParams(queryObj); // Store search params in state
 
     try {
-      const res = await Api().get(`/members?page=1&page_size=${paginationModel.pageSize}&${queryParams}`);
+      const res = await Api().get(`/members?page=1&page_size=${paginationModel.pageSize}&${new URLSearchParams(queryObj).toString()}`);
       setMembers(res.data.data.results);
       setCount(res.data.data.count);
       setLoadScreen(false);
@@ -427,41 +430,8 @@ const handleSubmit = async (e) => {
     let active = true;
     (async () => {
       setLoadScreen(true);
-      if (isFiltered) {
-        // If filtered, fetch with search params and current page
-        const occupation = document.getElementById('occupation_search')?.value || '';
-        const location = document.getElementById('location_search')?.value || '';
-        const phone_number = document.getElementById('phone_number_search')?.value || '';
-        const status = document.getElementById('church_status_search')?.value || '';
-        const gender = document.getElementById('gender_search')?.value || '';
-        const group = document.getElementById('group_search')?.value || '';
-        const search = document.getElementById('search')?.value || '';
-        const queryObj = {};
-        if (occupation) queryObj.occupation = occupation;
-        if (location) queryObj.location = location;
-        if (phone_number) queryObj.phone_number = phone_number;
-        if (status) queryObj.status = status;
-        if (gender) queryObj.gender = gender;
-        if (group) queryObj.group = group;
-        if (search) queryObj.search = search;
-        const queryParams = new URLSearchParams(queryObj).toString();
-        try {
-          const res = await Api().get(`/members?page=${paginationModel.page + 1}&page_size=${paginationModel.pageSize}&${queryParams}`);
-          setMembers(res.data.data.results);
-          setCount(res.data.data.count);
-        } catch (error) {
-          setOpenSnackbar(true);
-          setAlert({
-            open: true,
-            message: 'Error in fetching',
-            severity: 'error',
-          });
-        }
-        setLoadScreen(false);
-      } else {
-        await FarmData();
-        setLoadScreen(false);
-      }
+      // Always call FarmData on page change, and let FarmData handle filters
+      await FarmData();
       await Literals();
       await MembersReports();
       localStorage.removeItem('leadId');
@@ -469,11 +439,12 @@ const handleSubmit = async (e) => {
       if (!active) {
         return;
       }
+      setLoadScreen(false);
     })();
     return () => {
       active = false;
     };
-  }, [paginationModel.page, FarmData, isFiltered]);
+  }, [paginationModel.page, FarmData]);
 
   return (
     <>
